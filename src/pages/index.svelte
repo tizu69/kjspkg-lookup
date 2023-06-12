@@ -46,7 +46,7 @@
             Don't know what KJSPKG is? Click the GitHub logo at the bottom of the page
             <br />
             <br />
-            To link a package, simply do: <CodeBlock>{window.location.origin}/[package-name]</CodeBlock>!
+            To link a package, simply do: <CodeBlock>{window.location.origin}/#[package-name]</CodeBlock>!
         </p>
     </div>
 

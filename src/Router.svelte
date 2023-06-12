@@ -2,13 +2,12 @@
 
 <script>
     import Index from "./pages/index.svelte"
-    import NotFound from "./pages/notfound.svelte"
     import Info from "./pages/info.svelte"
   import Notfound from "./pages/notfound.svelte";
 
     let pkginfo
-    if (window.location.pathname!="/") {
-        let pkgname = window.location.pathname.substring(1)
+    if (window.location.hash) {
+        let pkgname = window.location.hash.substring(1)
 
         fetch("https://raw.githubusercontent.com/Modern-Modpacks/kjspkg/main/pkgs.json").then(r => {
             r.json().then(j => {

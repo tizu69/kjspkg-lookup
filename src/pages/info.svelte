@@ -2,7 +2,7 @@
   import CodeBlock from "../lib/CodeBlock.svelte";
 
     export let pkginfo
-    let pkgname = window.location.pathname.substring(1)
+    let pkgname = window.location.hash.substring(1)
 
     let prettify = str => {
         let newstr = ""

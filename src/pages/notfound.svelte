@@ -18,7 +18,7 @@
 
 <main>
     <h1>Whoops, something has gone wrong!</h1>
-    <h2>The package <CodeBlock>{window.location.pathname.substring(1)}</CodeBlock> was not found</h2>
+    <h2>The package <CodeBlock>{window.location.hash.substring(1)}</CodeBlock> was not found</h2>
 
     <br />
     <br />
