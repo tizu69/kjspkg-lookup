@@ -5,25 +5,28 @@
     import Info from "./pages/info.svelte"
     import Notfound from "./pages/notfound.svelte";
 
-    // TODO: add embed and fix reloading
+    // TODO: add embed
     let pkginfo
-    if (window.location.hash) {
-        let pkgname = window.location.hash.substring(1)
+    setInterval(() => {
+        if (window.location.hash) {
+            let pkgname = window.location.hash.substring(1)
 
-        fetch("https://raw.githubusercontent.com/Modern-Modpacks/kjspkg/main/pkgs.json").then(r => {
-            r.json().then(j => {
-                if (!Object.keys(j).includes(pkgname)) pkginfo = "404"
-                else {
-                    let regname = j[pkgname].split("@")[0]
-                    let branch = j[pkgname].includes("@") ? j[pkgname].split("@").at(-1) : "main"
-                    fetch(`https://raw.githubusercontent.com/${regname}/${branch}/.kjspkg`).then(i => {
-                        i.json().then(info => {pkginfo=info})
-                    })
-                }
+            fetch("https://raw.githubusercontent.com/Modern-Modpacks/kjspkg/main/pkgs.json").then(r => {
+                r.json().then(j => {
+                    if (!Object.keys(j).includes(pkgname)) pkginfo = "404"
+                    else {
+                        let regname = j[pkgname].split("@")[0]
+                        let branch = j[pkgname].includes("@") ? j[pkgname].split("@").at(-1) : "main"
+                        fetch(`https://raw.githubusercontent.com/${regname}/${branch}/.kjspkg`).then(i => {
+                            i.json().then(info => {pkginfo=info})
+                        })
+                    }
+                })
             })
-        })
-    }
-    else pkginfo = "main"
+        }
+        else pkginfo = "main"
+    }, 1);
+        
 </script>
 
 <style>

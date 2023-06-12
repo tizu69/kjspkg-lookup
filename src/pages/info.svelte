@@ -2,7 +2,11 @@
   import CodeBlock from "../lib/CodeBlock.svelte";
 
     export let pkginfo
-    let pkgname = window.location.hash.substring(1)
+    let pkgname
+    let versions
+    let loaders
+
+    setInterval(() => {pkgname = window.location.hash.substring(1); versions = getversions(); loaders = getloaders()}, 1)
 
     let prettify = str => {
         let newstr = ""
@@ -67,20 +71,20 @@
 </style>
 
 <svelte:head>
-    <title>{prettify(pkgname.replace("-", " "))}</title>
+    <title>{pkgname ? prettify(pkgname.replace("-", " ")) : null}</title>
 </svelte:head>
 
 <main>
     <div id="maininfo">
-        <h1>{prettify(pkgname.replace("-", " "))}</h1>
+        <h1>{pkgname ? prettify(pkgname.replace("-", " ")) : null}</h1>
         <h2>{pkginfo.description}</h2>
         <h3>By {pkginfo.author}</h3>
     </div>
 
     <div id="generalinfo">
         <h3>Available for:</h3>
-        <p>{getversions()}</p>
-        <p>{getloaders()}</p>
+        <p>{versions}</p>
+        <p>{loaders}</p>
 
         {#if pkginfo.dependencies.length || pkginfo.incompatibilities.length}
             <br />
