@@ -3,8 +3,9 @@
 <script>
     import Index from "./pages/index.svelte"
     import Info from "./pages/info.svelte"
-  import Notfound from "./pages/notfound.svelte";
+    import Notfound from "./pages/notfound.svelte";
 
+    // TODO: add embed and fix reloading
     let pkginfo
     if (window.location.hash) {
         let pkgname = window.location.hash.substring(1)
@@ -72,6 +73,24 @@
     }
     :global(a:hover) {
         opacity: .5;
+    }
+
+    @media only screen and (max-width: 600px) {
+        :global(h1) {
+            font-size: 2em;
+        }
+        :global(h2) {
+            font-size: 1em;
+        }
+        :global(h3) {
+            font-size: .9em;
+        }
+        :global(h4) {
+            font-size: .8em;
+        }
+        :global(p) {
+            font-size: .95em;
+        }
     }
 </style>
 

@@ -8,6 +8,12 @@
         border-radius: 10px;
         padding: 5px;
     }
+
+    @media only screen and (max-width: 600px) {
+        b {
+            padding: 3px;
+        }
+    }
 </style>
 
 <b title="Click to copy" bind:this={data} on:mousedown={() => {navigator.clipboard.writeText(data?.innerText)}}>

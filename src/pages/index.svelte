@@ -28,10 +28,16 @@
     #icons > a > img:hover {
         filter: invert(.7);
     }
+
+    @media only screen and (max-width: 600px) {
+        #logo {
+            height: 250px;
+        }
+    }
 </style>
 
 <main>
-    <img src="https://raw.githubusercontent.com/Modern-Modpacks/assets/main/Icons/Other/kjspkg.png" alt="logo">
+    <img id="logo" src="https://raw.githubusercontent.com/Modern-Modpacks/assets/main/Icons/Other/kjspkg.png" alt="logo">
 
     <div>
         <h1>KJSPKG LOOKUP</h1>
