@@ -14,21 +14,6 @@
         margin-bottom: 5vh;
     }
 
-    #icons {
-        display: flex;
-        justify-content: center;
-        column-gap: 25px;
-    }
-    #icons > a > img {
-        height: 30px;
-        filter: invert(1);
-
-        transition: filter .2s;
-    }
-    #icons > a > img:hover {
-        filter: invert(.7);
-    }
-
     @media only screen and (max-width: 600px) {
         #logo {
             height: 250px;

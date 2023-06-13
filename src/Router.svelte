@@ -3,10 +3,12 @@
 <script>
     import Index from "./pages/index.svelte"
     import Info from "./pages/info.svelte"
-    import Notfound from "./pages/notfound.svelte";
+    import Notfound from "./pages/notfound.svelte"
 
     // TODO: add embed
     let pkginfo
+    let branch
+    let regname
     setInterval(() => {
         if (window.location.hash) {
             let pkgname = window.location.hash.substring(1)
@@ -15,8 +17,8 @@
                 r.json().then(j => {
                     if (!Object.keys(j).includes(pkgname)) pkginfo = "404"
                     else {
-                        let regname = j[pkgname].split("@")[0]
-                        let branch = j[pkgname].includes("@") ? j[pkgname].split("@").at(-1) : "main"
+                        regname = j[pkgname].split("@")[0]
+                        branch = j[pkgname].includes("@") ? j[pkgname].split("@").at(-1) : "main"
                         fetch(`https://raw.githubusercontent.com/${regname}/${branch}/.kjspkg`).then(i => {
                             i.json().then(info => {pkginfo=info})
                         })
@@ -26,7 +28,6 @@
         }
         else pkginfo = "main"
     }, 1);
-        
 </script>
 
 <style>
@@ -78,6 +79,22 @@
         opacity: .5;
     }
 
+
+    :global(#icons) {
+        display: flex;
+        justify-content: center;
+        column-gap: 25px;
+    }
+    :global(#icons > a > img) {
+        height: 30px;
+        filter: invert(1);
+
+        transition: filter .2s;
+    }
+    :global(#icons > a > img:hover) {
+        filter: invert(.7);
+    }
+
     @media only screen and (max-width: 600px) {
         :global(h1) {
             font-size: 2em;
@@ -105,6 +122,6 @@
     {:else if pkginfo=="404"}
         <Notfound />
     {:else}
-        <Info pkginfo={pkginfo}/>
+        <Info pkginfo={pkginfo} sourcelink="https://github.com/{regname}/tree/{branch}"/>
     {/if}
 </main>
