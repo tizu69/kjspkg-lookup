@@ -73,12 +73,12 @@
 </style>
 
 <svelte:head>
-    <title>{pkgname ? prettify(pkgname.replace("-", " ")) : null}</title>
+    <title>{pkgname ? prettify(pkgname.replaceAll("-", " ")) : null}</title>
 </svelte:head>
 
 <main>
     <div id="maininfo">
-        <h1>{pkgname ? prettify(pkgname.replace("-", " ")) : null}</h1>
+        <h1>{pkgname ? prettify(pkgname.replaceAll("-", " ")) : null}</h1>
         <h2>{pkginfo.description}</h2>
         <h3>By {pkginfo.author}</h3>
     </div>
