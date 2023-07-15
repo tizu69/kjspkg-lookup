@@ -1,5 +1,5 @@
 <script>
-  import CodeBlock from "../lib/CodeBlock.svelte";
+    import CodeBlock from "../lib/CodeBlock.svelte";
 
     export let pkginfo
     export let sourcelink
@@ -10,20 +10,7 @@
 
     setInterval(() => {pkgname = window.location.hash.substring(1); versions = getversions(); loaders = getloaders()}, 1)
 
-    let prettify = str => {
-        let newstr = ""
-        let bigletter = true
-
-        for(const i of str) {
-            if (bigletter) newstr += i.toUpperCase()
-            else newstr += i
-
-            bigletter = false
-            if ([" ", "("].includes(i)) bigletter=true
-        }
-
-        return newstr
-    }
+    export let prettify
 
     let getversions = () => {
         let versions = []
