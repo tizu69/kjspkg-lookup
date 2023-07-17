@@ -11,6 +11,14 @@
     setInterval(() => {pkgname = window.location.hash.substring(1); versions = getversions(); loaders = getloaders()}, 1)
 
     export let prettify
+    let linkify = str => {
+        let newstr = []
+        str.split(" ").forEach(w => {
+            if(w.startsWith("http://") || w.startsWith("https://")) newstr.push(`<a href="${w}">${w}</a>`)
+            else newstr.push(w)
+        })
+        return newstr.join(" ")
+    }
 
     let getversions = () => {
         let versions = []
@@ -66,7 +74,7 @@
 <main>
     <div id="maininfo">
         <h1>{pkgname ? prettify(pkgname.replaceAll("-", " ")) : null}</h1>
-        <h2>{pkginfo.description}</h2>
+        <h2>{@html linkify(pkginfo.description)}</h2>
         <h3>By {pkginfo.author}</h3>
     </div>
 
