@@ -62,6 +62,10 @@
         margin-block: 15px;
     }
 
+    h1, h2, h3 {
+        margin-inline: 20px;
+    }
+
     h4 {
         align-self: flex-end;
     }
