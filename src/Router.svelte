@@ -75,7 +75,7 @@
         <Info
             {pkginfo}
             prettify={prettify}
-            sourcelink="https://github.com/{regname}/tree/{branch}"
+            sourcelink="https://github.com/{regname}/tree/{branch}{path!=null ? "/"+path : ""}"
         />
     {/if}
 </main>
