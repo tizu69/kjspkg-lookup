@@ -37,8 +37,8 @@
     let getdepsandincompats = arr => {
         let newarr = []
         arr.forEach(i => {
-            if (i.includes(":")) newarr.push(prettify(`${i.split(":").at(-1)} (${i.split(":")[0]})`))
-            else newarr.push(prettify(i))
+            if (i.includes(":")) newarr.push(prettify(`${i.split(":").at(-1).replaceAll("-", " ").replaceAll("_", " ")} (${i.split(":")[0]})`))
+            else newarr.push(prettify(i.replaceAll("-", " ").replaceAll("_", " ")))
         })
         return newarr.join(", ")
     }

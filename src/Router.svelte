@@ -9,6 +9,7 @@
     let pkgname = ""
     let pkginfo
     let branch
+    let path
     let regname
 
     let search = false
@@ -40,12 +41,15 @@
             pkgname = window.location.hash.substring(1);
             if (!Object.keys(packages).includes(pkgname)) pkginfo = "404";
             else {
-                regname = packages[pkgname].split("@")[0];
+                regname = packages[pkgname].split("@")[0].split("$")[0];
                 branch = packages[pkgname].includes("@")
                     ? packages[pkgname].split("@").at(-1)
                     : "main";
+                path = packages[pkgname].includes("$")
+                    ? packages[pkgname].split("@")[0].split("$").at(-1)
+                    : null
                 fetch(
-                    `https://raw.githubusercontent.com/${regname}/${branch}/.kjspkg`
+                    `https://raw.githubusercontent.com/${regname}/${branch}${path!=null ? "/"+path : ""}/.kjspkg`
                 ).then((i) => {
                     i.json().then((info) => {
                         pkginfo = info;
