@@ -209,19 +209,25 @@
 
     @media only screen and (max-width: 600px) {
         :global(h1) {
-            font-size: 2em;
+            font-size: 1.7em;
+        }
+        :global(button) {
+            font-size: 1.7em;
         }
         :global(h2) {
-            font-size: 1em;
+            font-size: .7em;
+        }
+        :global(input) {
+            font-size: .7em;
         }
         :global(h3) {
-            font-size: 0.9em;
+            font-size: 0.6em;
         }
         :global(h4) {
-            font-size: 0.8em;
+            font-size: 0.5em;
         }
         :global(p) {
-            font-size: 0.95em;
+            font-size: 0.65em;
         }
     }
 </style>

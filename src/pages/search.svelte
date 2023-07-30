@@ -62,7 +62,9 @@
         flex-direction: column;
         align-items: center;
 
-        width: 90vw;
+        width: 100vw;
+        padding-inline: 30px;
+        box-sizing: border-box;
     }
     #card {
         width: 100%;
@@ -93,6 +95,11 @@
         }
         #cards:hover #card:not(:hover) {
             transform: scale(100%);
+        }
+    }
+    @media only screen and (max-width: 600px) {
+        #search > input {
+            width: 80vw;
         }
     }
 </style>
