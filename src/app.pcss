@@ -1,0 +1,67 @@
+/* Write your global styles here, in PostCSS syntax */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+	@apply h-full overflow-hidden;
+}
+
+* {
+	@apply select-none;
+}
+
+@layer utilities {
+	.style-markdown h1 {
+		@apply h1 mb-2 mt-4 font-bold;
+	}
+	.style-markdown h2 {
+		@apply h2 mb-2 mt-4 font-bold;
+	}
+	.style-markdown h3 {
+		@apply h3 mb-2 mt-4 font-bold;
+	}
+
+	.style-markdown strong {
+		@apply font-bold;
+	}
+	.style-markdown em {
+		@apply italic;
+	}
+	.style-markdown s {
+		@apply line-through;
+	}
+	.style-markdown blockquote {
+		@apply blockquote p-2;
+	}
+
+	.style-markdown ol > li {
+		@apply ml-6 list-decimal;
+	}
+	.style-markdown ul > li {
+		@apply ml-6 list-disc;
+	}
+
+	.style-markdown pre {
+		@apply bg-surface-backdrop-token pre w-full overflow-scroll;
+	}
+	.style-markdown pre > code {
+		@apply select-text;
+	}
+
+	.style-markdown code:not(pre code) {
+		@apply code select-text;
+	}
+
+	.style-markdown a {
+		@apply anchor;
+	}
+	.style-markdown img {
+		@apply rounded-container-token;
+	}
+
+	.style-markdown table {
+		@apply table;
+	}
+}
