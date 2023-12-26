@@ -1,7 +1,10 @@
+import { goto } from '$app/navigation';
+import { base } from '$app/paths';
+import { page } from '$app/stores';
+import markdownit from 'markdown-it';
 import { get } from 'svelte/store';
 import consts from './consts';
 import { packageListStore } from './stores';
-import markdownit from 'markdown-it';
 
 const md = markdownit({
 	html: false,
@@ -72,4 +75,21 @@ export function markdownInline(str: string): string {
 
 export function markdown(str: string): string {
 	return md.render(str);
+}
+
+import { generateInputString, parseInputString } from './argparse';
+export { generateInputString, parseInputString };
+
+export function removeBase(target: string, base: string): string {
+	return target.replace(base, '');
+}
+
+export function goBack() {
+	const sPage = get(page);
+
+	for (const path of [removeBase(sPage.url.pathname, base), sPage.route.id])
+		if (path && consts.WHERE_TO[path]) {
+			goto(base + consts.WHERE_TO[path]);
+			break;
+		}
 }

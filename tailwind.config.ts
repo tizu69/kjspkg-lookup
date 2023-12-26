@@ -5,7 +5,10 @@ import { skeleton } from '@skeletonlabs/tw-plugin';
 import { join } from 'path';
 import type { Config } from 'tailwindcss';
 
-import { ThemeKJSPKG } from './src/themes/kjspkg';
+import { ThemeKjspkg } from './src/themes/kjspkg';
+import { ThemeKjspkgLighter } from './src/themes/kjspkg-lighter';
+import { ThemeKjspkgGcat } from './src/themes/kjspkg-gcat';
+import { ThemeSerenity } from './src/themes/serenity';
 
 const config = {
 	darkMode: 'class',
@@ -21,7 +24,8 @@ const config = {
 		typography,
 		skeleton({
 			themes: {
-				custom: [ThemeKJSPKG]
+				custom: [ThemeKjspkg, ThemeKjspkgLighter, ThemeKjspkgGcat, ThemeSerenity],
+				preset: ['wintry', 'crimson']
 			}
 		})
 	]
