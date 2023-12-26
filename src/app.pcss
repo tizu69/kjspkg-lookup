@@ -8,10 +8,6 @@ body {
 	@apply h-full overflow-hidden;
 }
 
-* {
-	@apply select-none;
-}
-
 @layer utilities {
 	.style-markdown h1 {
 		@apply h1 mb-2 mt-4 font-bold;
@@ -64,4 +60,48 @@ body {
 	.style-markdown table {
 		@apply table;
 	}
+
+	/* --------- */
+
+	.style-markdown a > img[alt='kjspkg-available'] {
+		animation: kjspkgBadge 2s infinite ease-out;
+		animation-iteration-count: 1;
+	}
+}
+
+@keyframes kjspkgBadge {
+	0% {
+		filter: hue-rotate(0deg);
+	}
+
+	75% {
+		scale: 100%;
+	}
+	85% {
+		scale: 110%;
+	}
+	96% {
+		scale: 100%;
+	}
+
+	100% {
+		filter: hue-rotate(360deg);
+	}
+}
+
+@layer base {
+	body {
+		@apply border-8 border-error-900;
+	}
+	body::after {
+		@apply absolute left-0 top-0 z-50 rounded bg-error-900 p-2 text-sm;
+		content: 'Work in progress! Expect bugs.';
+	}
+}
+
+* {
+	@apply select-none;
+}
+:root.color-animated * {
+	@apply transition-all duration-[2500ms] ease-in-out;
 }

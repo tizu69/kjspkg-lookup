@@ -1,7 +1,7 @@
 import type { CustomThemeConfig } from '@skeletonlabs/tw-plugin';
 
-export const ThemeKjspkg: CustomThemeConfig = {
-	name: 'kjspkg',
+export const ThemeKjspkgLighter: CustomThemeConfig = {
+	name: 'kjspkg-lighter',
 	properties: {
 		// =~= Theme Properties =~=
 		'--theme-font-family-base': `Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'`,
@@ -86,16 +86,16 @@ export const ThemeKjspkg: CustomThemeConfig = {
 		'--color-error-700': '133 12 73', // #850c49
 		'--color-error-800': '106 10 58', // #6a0a3a
 		'--color-error-900': '87 8 48', // #570830
-		// surface | #240637
-		'--color-surface-50': '222 218 225', // #dedae1
-		'--color-surface-100': '211 205 215', // #d3cdd7
-		'--color-surface-200': '200 193 205', // #c8c1cd
-		'--color-surface-300': '167 155 175', // #a79baf
-		'--color-surface-400': '102 81 115', // #665173
-		'--color-surface-500': '36 6 55', // #240637
-		'--color-surface-600': '32 5 50', // #200532
-		'--color-surface-700': '27 5 41', // #1b0529
-		'--color-surface-800': '22 4 33', // #160421
-		'--color-surface-900': '18 3 27' // #12031b
+		// surface | #633e79
+		'--color-surface-50': '232 226 235', // #e8e2eb
+		'--color-surface-100': '224 216 228', // #e0d8e4
+		'--color-surface-200': '216 207 222', // #d8cfde
+		'--color-surface-300': '193 178 201', // #c1b2c9
+		'--color-surface-400': '146 120 161', // #9278a1
+		'--color-surface-500': '99 62 121', // #633e79
+		'--color-surface-600': '89 56 109', // #59386d
+		'--color-surface-700': '74 47 91', // #4a2f5b
+		'--color-surface-800': '59 37 73', // #3b2549
+		'--color-surface-900': '49 30 59' // #311e3b
 	}
 };

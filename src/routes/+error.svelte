@@ -12,7 +12,7 @@
 			message: `${$page.error?.message}`,
 			hideDismiss: true,
 			timeout: 5000,
-			background: 'variant-glass-error'
+			background: 'variant-filled-error'
 		});
 		goto(base + '/');
 	});

@@ -9,12 +9,16 @@
 	}
 </script>
 
-<img src={consts.LOGO} alt="logo" class="rounded-token mx-auto aspect-square h-32" />
-<h1 class="h1 text-center">KJSPKG</h1>
+<img src={consts.LOGO} alt="logo" class="mx-auto aspect-square h-32 rounded-token" />
+<h1 class="h1 text-center hover:hue-rotate">KJSPKG</h1>
 
 <hr />
 
 <p class="text-center">
-	This website serves as a means to share KJSPKG packages more easily.
-	Use the search bar above to search for packages, or <a href="{base}/s/*" class="anchor">browse all packages</a>.
+	This website serves as a means to share KJSPKG packages more easily. Use the search bar above to
+	search for packages, or <a href="{base}/s" class="anchor">browse all packages</a>.
+</p>
+<p class="text-center">
+	Think something's missing? Please report it to us. For the time being, you can alternatively use
+	the old <a href="{base}/legacy/index.html" class="anchor">legacy lookup</a>.
 </p>
