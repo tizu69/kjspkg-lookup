@@ -20,5 +20,6 @@
 </p>
 <p class="text-center">
 	Think something's missing? Please report it to us. For the time being, you can alternatively use
-	the old <a href="{base}/legacy/index.html" class="anchor">legacy lookup</a>.
+	the old <a href="{base}/legacy/index.html" class="anchor">legacy lookup</a>. Note that the legacy
+	lookup will be dropped in the future.
 </p>
