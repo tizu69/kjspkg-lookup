@@ -83,10 +83,19 @@
 			docs = markdown(text);
 		} catch {}
 	});
+
+	$: title = `${packageNameToReadableFormat($page.url.searchParams.get('id') ?? 'no-name')} - KJSPKG Lookup`
 </script>
 
 <svelte:head>
-	<title>{packageNameToReadableFormat($page.url.searchParams.get('id') ?? 'no-name')} - KJSPKG Lookup</title>
+	<title>{title}</title>
+
+	<meta property="og:title" content="{title}" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="http://my.site.com" />
+	<meta property="og:image" content="http://my.site.com/images/thumb.png" />
+	<meta property="og:description" content="Site description" />
+	<meta name="theme-color" content="#FF0000" />
 </svelte:head>
 
 {#if state == 'loading'}

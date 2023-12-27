@@ -89,15 +89,15 @@
 					{
 						label: 'Author (a-z)',
 						name: 'author'
-					},
-					{
+					}
+					/* {
 						label: 'Download count',
 						name: 'downloads'
 					},
 					{
 						label: 'Views',
 						name: 'views'
-					}
+					} */
 				].map(({ label, name }) => ({
 					type: 'ITEM',
 					label,

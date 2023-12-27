@@ -16,7 +16,7 @@
 	import { contextMenu, type ContextMenuItem } from './overlays/contextMenu';
 	import { getPos, triggerOverlay } from './overlays/overlay';
 	import { userPreferencesStore } from './stores';
-	import { goBack } from './utils';
+	import { generateInputString, goBack, parseInputString } from './utils';
 
 	function getQuery(): string {
 		return $page.route.id == '/s' ? $page.url.searchParams.get('q') ?? '' : '';
@@ -98,6 +98,8 @@
 			} */
 		] as ContextMenuItem[]
 	};
+
+	$: queryParams = parseInputString(searched);
 </script>
 
 <svelte:window on:keypress={() => inputElement.focus()} />
@@ -165,12 +167,35 @@
 			x: getPos(overlayTarget).x,
 			y: getPos(overlayTarget).y + getPos(overlayTarget).h + 8,
 			w: getPos(overlayTarget).w + 'px',
-			h: '8rem'
+			h: ''
 		},
-		visible: showOverlay
+		visible: showOverlay && (!!queryParams.author || !!queryParams._details)
 	}}
-	class="card variant-glass-secondary absolute p-2"
+	class="card variant-glass-secondary absolute flex gap-1 p-2"
 >
-	TODO: top 3 results for quick access? idk, maybe that or something different (or maybe nothing at
-	all) hehe :3
+	{#if queryParams.author}
+		<button
+			class="variant-soft chip hover:variant-filled-error hover:line-through"
+			on:click={() => {
+				let q = queryParams;
+				delete q.author;
+				goto(`${base}/s?q=${generateInputString(q)}`);
+			}}
+		>
+			by {queryParams.author}
+		</button>
+	{/if}
+
+	{#if queryParams._details}
+		<button
+			class="variant-soft chip hover:variant-filled-error hover:line-through"
+			on:click={() => {
+				let q = queryParams;
+				delete q._details;
+				goto(`${base}/s?q=${generateInputString(q)}`);
+			}}
+		>
+			detailed
+		</button>
+	{/if}
 </div> -->
