@@ -7,7 +7,7 @@ export default {
 	DOCS_URL_REGEX: 'github.com/([^/]+/[^/]+)/blob/(.*)',
 	WHERE_TO: {
 		'/s': '/',
-		'/p/[package]': '/s'
+		'/p': '/s'
 	} as { [key: string]: string },
 	KJSPKG_README: 'https://github.com/Modern-Modpacks/kjspkg#kjspkg'
 	// MR_VALID: 'https://api.modrinth.com/v2/project/',

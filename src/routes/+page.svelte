@@ -5,7 +5,7 @@
 	import consts from '$lib/consts';
 
 	if ($page.url.hash != '') {
-		goto(base + `/p/${$page.url.hash.substring(1)}`);
+		goto(base + `/p?id=${encodeURIComponent($page.url.hash.substring(1))}`);
 	}
 </script>
 

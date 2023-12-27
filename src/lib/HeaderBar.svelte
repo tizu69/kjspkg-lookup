@@ -7,6 +7,7 @@
 	import {
 		IconArrowLeft,
 		IconCheck,
+		IconColorSwatch,
 		IconGridDots,
 		IconSearch,
 		IconSettings
@@ -23,6 +24,7 @@
 
 	let searched = getQuery();
 	let showOverlay = false;
+	let allowSettingsClick = true;
 
 	let inputElement: HTMLInputElement;
 	let overlayTarget: HTMLDivElement;
@@ -50,8 +52,16 @@
 					label,
 					icon: $userPreferencesStore.theme == name ? IconCheck : IconBlank,
 					action: () => {
+						allowSettingsClick = false;
+
 						document.documentElement.classList.add('color-animated');
-						setTimeout(() => document.documentElement.classList.remove('color-animated'), 2500);
+						setTimeout(
+							() => (
+								document.documentElement.classList.remove('color-animated'),
+								(allowSettingsClick = true)
+							),
+							2500
+						);
 
 						$userPreferencesStore.theme = name;
 						document.body.dataset.theme = $userPreferencesStore.theme ?? 'kjspkg';
@@ -134,18 +144,23 @@
 			bind:value={searched}
 			on:focus={() => (showOverlay = true)}
 			on:blur={() => (showOverlay = false)}
-			on:change={() => goto(base + `/s?q=${encodeURIComponent(searched || '')}`)}
+			on:change={() =>
+				goto(base + `/s?q=${encodeURIComponent(searched || '')}`, { keepFocus: true })}
 		/>
 	</div>
 
 	<svelte:fragment slot="trail">
-		<button class="btn-icon hover:variant-soft-primary" use:contextMenu={settingsContextMenu}>
-			<IconSettings />
+		<button
+			class="btn-icon hover:variant-soft-primary"
+			disabled={!allowSettingsClick}
+			use:contextMenu={settingsContextMenu}
+		>
+			<IconColorSwatch />
 		</button>
 	</svelte:fragment>
 </AppBar>
 
-<div
+<!-- <div
 	use:triggerOverlay={{
 		pos: {
 			x: getPos(overlayTarget).x,
@@ -159,4 +174,4 @@
 >
 	TODO: top 3 results for quick access? idk, maybe that or something different (or maybe nothing at
 	all) hehe :3
-</div>
+</div> -->

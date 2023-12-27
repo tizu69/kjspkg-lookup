@@ -32,7 +32,7 @@
 		on:click={() => ($contextMenuStore = undefined)}
 		transition:slide={{ axis: 'y', duration: 300 }}
 	>
-		<div class="flex w-48 flex-col gap-1">
+		<div class="flex flex-col gap-1">
 			{#each $contextMenuStore.items as item, i}
 				{#if item.type == 'SEPARATOR'}
 					{#if i > 0}
@@ -42,7 +42,7 @@
 				{:else if item.type == 'ITEM'}
 					<button
 						on:click={() => item.type == 'ITEM' && item.action()}
-						class="flex items-center gap-2 overflow-hidden whitespace-nowrap p-2 px-3 rounded-container-token hover:variant-soft-primary"
+						class="flex items-center gap-2 overflow-hidden whitespace-nowrap p-2 pl-3 pr-12 rounded-container-token hover:variant-soft-primary"
 					>
 						{#if item.icon}
 							<svelte:component this={item.icon} />

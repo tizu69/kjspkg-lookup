@@ -48,10 +48,10 @@
 	{@const path = locatorInfo[4]}
 
 	<a
-		href={`${base}/p/${name}`}
+		href={`${base}/p?id=${encodeURIComponent(name)}`}
 		class="card flex p-4 hover:variant-soft-primary"
 		on:click={() => dispatch('select', name)}
-		class:!variant-filled-primary={$page.params.package == name}
+		class:!variant-filled-primary={$page.url.searchParams.get('id') == name}
 		animate:flip={{ delay: i * 25, duration: 1000 }}
 		transition:fade={{ delay: i * 25, duration: 300 }}
 	>

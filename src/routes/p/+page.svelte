@@ -36,7 +36,7 @@
 	onMount(async () => {
 		if (!(await initPackageList())) goto(base + '/s');
 
-		locator = ($packageListStore ?? {})[$page.params.package];
+		locator = ($packageListStore ?? {})[$page.url.searchParams.get('id') ?? ''];
 		if (!locator) {
 			state = 'fail';
 		}
@@ -61,10 +61,10 @@
 
 		$currentAuthorStore = author ?? '';
 
-		/* if (!$packageStatusStore.back.d.some((p) => p[0] == $page.params.package))
+		/* if (!$packageStatusStore.back.d.some((p) => p[0] == $page.url.searchParams.get('id')))
 			$packageStatusStore.back.d = [
 				...$packageStatusStore.back.d,
-				...$packageStatusStore.search.d.filter((p) => p[0] == $page.params.package)
+				...$packageStatusStore.search.d.filter((p) => p[0] == $page.url.searchParams.get('id'))
 			]; */
 
 		issueLink = `https://github.com/${author}/${repo}/issues`;
@@ -94,7 +94,7 @@
 			class="no-underline select-text anchor"
 			target="_blank"
 		>
-			{packageNameToReadableFormat($page.params.package) ?? 'This package'}
+			{packageNameToReadableFormat($page.url.searchParams.get('id') ?? 'no-name') ?? 'This package'}
 		</a>
 	</h1>
 
@@ -133,7 +133,7 @@
 
 		<!-- <CodeBlock
 			language="Install package"
-			code={'kjspkg install ' + $page.params.package}
+			code={'kjspkg install ' + $page.url.searchParams.get('id')}
 			background="variant-soft w-full"
 			buttonCopied="ok have fun"
 		/> -->
@@ -141,7 +141,7 @@
 		<div class="hidden p-4 space-y-2 card md:block">
 			<dt class="text-sm opacity-50">Manage package (click to copy)</dt>
 			<dd class="flex flex-col gap-1">
-				<ManagePackage name={$page.params.package} link={issueLink} />
+				<ManagePackage name={$page.url.searchParams.get('id') ?? 'no-name'} link={issueLink} />
 			</dd>
 		</div>
 

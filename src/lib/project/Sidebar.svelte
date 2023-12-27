@@ -24,7 +24,7 @@
 		<!-- {#if o.back.v && o.back.d.length > 1 && !o.back.hidePaths.includes($page.route.id ?? '') }
 			<h3 class="h4 mt-4 text-center">Step back</h3>
 			<PackageList
-				p={o.back.d.filter((p) => p[0] != $page.params.package)}
+				p={o.back.d.filter((p) => p[0] != $page.url.searchParams.get('id'))}
 			/>
 		{/if} -->
 

@@ -24,7 +24,7 @@
 	$: queryParams = parseInputString($page.url.searchParams.get('q') ?? '');
 
 	$: $packageStatusStore.search.d = Object.entries(
-		($page.url.searchParams.get('q')
+		(!$page.url.searchParams.get('q')
 			? $packageListStore
 			: filterObjectByKey($packageListStore ?? {}, queryParams.ROOT)) ?? {}
 	);
@@ -78,10 +78,6 @@
 			use:contextMenu={{
 				initiator: 'left',
 				items: [
-					/* {
-						label: 'Unsorted',
-						name: ''
-					}, */
 					{
 						label: 'Name (a-z)',
 						name: 'name'
