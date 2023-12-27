@@ -14,7 +14,7 @@
 </svelte:head>
 
 <img src={consts.LOGO} alt="logo" class="mx-auto aspect-square h-32 rounded-token" />
-<h1 class="h1 text-center hover:hue-rotate">KJSPKG</h1>
+<h1 class="h1 text-center hover:hue-rotate">KJSPKG Lookup</h1>
 
 <hr />
 

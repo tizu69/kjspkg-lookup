@@ -5,7 +5,7 @@
 	import { packageNameToReadableFormat } from '$lib/utils';
 	import { createEventDispatcher } from 'svelte';
 	import { flip } from 'svelte/animate';
-	import { fade } from 'svelte/transition';
+	import { fade, slide } from 'svelte/transition';
 
 	const dispatch = createEventDispatcher();
 
@@ -15,20 +15,22 @@
 	export let showAvatar = true;
 	export let showDetails = true;
 	export let showName = true;
+	export let compact = false;
 
 	$: sortedP = (() => {
+		const alphabetic = [...p].sort((_a, _b) => {
+			const a = _a[0];
+			const b = _b[0];
+
+			return a == b ? 0 : a < b ? -1 : 1;
+		});
 		switch (sortBy) {
 			case '':
 				return p;
 			case 'name':
-				return [...p].sort((_a, _b) => {
-					const a = _a[0];
-					const b = _b[0];
-
-					return a == b ? 0 : a < b ? -1 : 1;
-				});
+				return alphabetic;
 			case 'author':
-				return [...p].sort((_a, _b) => {
+				return [...alphabetic].sort((_a, _b) => {
 					const a = (_a[1].match(consts.LOCATOR_REGEX)!)[1];
 					const b = (_b[1].match(consts.LOCATOR_REGEX)!)[1];
 					
@@ -50,16 +52,18 @@
 	<a
 		href={`${base}/p?id=${encodeURIComponent(name)}`}
 		class="card flex p-4 hover:variant-soft-primary"
+		class:flex-col={compact}
 		on:click={() => dispatch('select', name)}
 		class:!variant-filled-primary={$page.url.searchParams.get('id') == name}
 		animate:flip={{ delay: i * 25, duration: 1000 }}
 		transition:fade={{ delay: i * 25, duration: 300 }}
 	>
-		{#if showAvatar}
+		{#if showAvatar && !compact}
 			<img
 				src={consts.AVATARS + author}
 				alt="author's profile avatar"
-				class="my-auto mr-4 aspect-square h-8 rounded-token"
+				class="my-auto mr-4 aspect-square rounded-token h-8"
+				in:slide={{ axis: 'x', delay: i * 25 }}
 			/>
 		{/if}
 		<dl>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { afterNavigate, beforeNavigate } from '$app/navigation';
+	import { afterNavigate, beforeNavigate, onNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { HeaderBar, Sidebar } from '$lib/index';
 	import ContextMenu from '$lib/overlays/ContextMenu.svelte';
@@ -24,6 +24,18 @@
 	let navigating = false;
 	beforeNavigate(() => (navigating = true));
 	afterNavigate(() => (navigating = false));
+
+	onNavigate((navigation) => {
+		if (navigation.to?.route.id == navigation.from?.route.id) return;
+		if (!document.startViewTransition) return;
+
+		return new Promise((resolve) => {
+			document.startViewTransition(async () => {
+				resolve();
+				await navigation.complete;
+			});
+		});
+	});
 </script>
 
 <Toast position="br" max={8} />
@@ -49,7 +61,7 @@
 		<Sidebar />
 	</svelte:fragment>
 
-	<div class="container mx-auto space-y-4 p-10">
+	<div class="container mx-auto max-w-screen-lg p-4 space-y-4 md:p-10">
 		{#key $page.url.pathname}
 			<slot />
 		{/key}

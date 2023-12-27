@@ -83,19 +83,10 @@
 			docs = markdown(text);
 		} catch {}
 	});
-
-	$: title = `${packageNameToReadableFormat($page.url.searchParams.get('id') ?? 'no-name')} - KJSPKG Lookup`
 </script>
 
 <svelte:head>
-	<title>{title}</title>
-
-	<meta property="og:title" content="{title}" />
-	<meta property="og:type" content="website" />
-	<meta property="og:url" content="http://my.site.com" />
-	<meta property="og:image" content="http://my.site.com/images/thumb.png" />
-	<meta property="og:description" content="Site description" />
-	<meta name="theme-color" content="#FF0000" />
+	<title>{packageNameToReadableFormat($page.url.searchParams.get('id') ?? 'no-name')} - KJSPKG Lookup</title>
 </svelte:head>
 
 {#if state == 'loading'}
@@ -125,8 +116,8 @@
 			<dl>
 				<dt class="text-sm opacity-50">Created by</dt>
 				<dd class="font-bold select-text">
-					{locatorInfo[1]}
-					{locatorInfo[1] != thisPackage.author ? `(${thisPackage.author})` : ''}
+					{locatorInfo[1] != thisPackage.author ? `${thisPackage.author}` : ''}
+					({locatorInfo[1]})
 				</dd>
 			</dl>
 		</a>
@@ -186,7 +177,7 @@
 		{#if docs != ''}
 			<section class="p-4 space-y-4 card h-fit lg:col-span-2">
 				<dt class="text-sm opacity-50">
-					<a href={docLoc} class="anchor" target="_blank">README file</a>
+					<a href={docLoc} class="underline" target="_blank">README file</a>
 				</dt>
 				<dd class="style-markdown flex select-text flex-col items-start *:select-text">
 					{@html docs}

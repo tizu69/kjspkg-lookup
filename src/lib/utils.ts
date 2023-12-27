@@ -6,6 +6,9 @@ import { get } from 'svelte/store';
 import consts from './consts';
 import { packageListStore } from './stores';
 
+// @ts-expect-error full exists, thanks crappy types
+import { full as emoji } from 'markdown-it-emoji';
+
 const md = markdownit({
 	html: false,
 	xhtmlOut: false,
@@ -17,7 +20,7 @@ const md = markdownit({
 	highlight: function (/*str, lang*/) {
 		return '';
 	}
-});
+}).use(emoji);
 
 export function filterObjectByKey(
 	obj: { [key: string]: string },

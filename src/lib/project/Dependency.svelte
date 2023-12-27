@@ -34,7 +34,7 @@
 				{
 					type: 'ITEM',
 					label: 'CurseForge',
-					action: () => window.open('https://www.curseforge.com/minecraft/search?search=' + name)
+					action: () => window.open('https://www.curseforge.com/minecraft/search?category=mods&class=mc-mods&search=' + name)
 				}
 			]
 		}}

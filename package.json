@@ -38,7 +38,10 @@
 	"dependencies": {
 		"@floating-ui/dom": "^1.5.3",
 		"@tabler/icons-svelte": "^2.44.0",
+		"@types/dom-view-transitions": "^1.0.4",
 		"@types/markdown-it": "^13.0.7",
-		"markdown-it": "^14.0.0"
+		"@types/markdown-it-emoji": "^2.0.4",
+		"markdown-it": "^14.0.0",
+		"markdown-it-emoji": "^3.0.0"
 	}
 }

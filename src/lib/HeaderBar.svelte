@@ -109,6 +109,7 @@
 	slotDefault="place-self-center"
 	slotTrail="place-self-end"
 	shadow="shadow-lg"
+	class="vt-none"
 >
 	<svelte:fragment slot="lead">
 		<span class="flex items-center gap-2">

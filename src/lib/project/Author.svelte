@@ -20,7 +20,7 @@
 		/>
 	{/if}
 	<dl class="grow">
-		<dt class="font-bold">{author}</dt>
+		<dt class="font-bold select-text">{author}</dt>
 		{#if c > 0}
 			<dd class="text-sm opacity-50">
 				owns {c}

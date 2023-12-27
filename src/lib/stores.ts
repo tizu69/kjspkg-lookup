@@ -14,4 +14,5 @@ export const userPreferencesStore = localStorageStore<{
 	sortBy: '' | 'name' | 'author' | 'downloads' | 'views';
 	theme: string;
 	lightMode: boolean;
-}>('preferences', { sortBy: 'name', theme: 'kjspkg', lightMode: false });
+	compact: boolean;
+}>('preferences', { sortBy: 'name', theme: 'kjspkg', lightMode: false, compact: false });

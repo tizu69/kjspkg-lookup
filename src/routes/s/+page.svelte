@@ -44,41 +44,60 @@
 	<title>{$page.url.searchParams.get('q') || 'Search'} - KJSPKG Lookup</title>
 </svelte:head>
 
-<div class="mt-4 flex justify-between">
+<div class="mt-4 md:flex justify-between">
 	<h1 class="h3">
 		{#if !$page.url.searchParams.get('q')}
-			{$packageStatusStore.search.d.length} packages available
+			Found <span>{$packageStatusStore.search.d.length}</span> packages
 		{:else}
 			Found
-			<span class="select-text">{resultedFilter.length}</span>
-			<a href="{base}/s" class="anchor no-underline"
-				>{resultedFilter.length == 1 ? 'package' : 'packages'}</a
-			>
+			<span>{resultedFilter.length}</span>
+			<a href="{base}/s" class="anchor no-underline">
+				{resultedFilter.length == 1 ? 'package' : 'packages'}
+			</a>
 
 			{#if queryParams.author && filteredAuthor.length > 0}
-				<span>
-					made by
-					<a
-						href="https://github.com/{queryParams.author}"
-						class="anchor no-underline"
-						target="_blank"
-					>
-						{queryParams.author}
-					</a>
-				</span>
+				<button
+					class="transition-all hover:variant-filled-error hover:rounded hover:p-1 hover:px-2 hover:line-through"
+					on:click={() => {
+						let q = queryParams;
+						delete q.author;
+						goto(`${base}/s?q=${generateInputString(q)}`);
+					}}
+				>
+					made by {queryParams.author}
+				</button>
 			{/if}
 			{#if queryParams.ROOT != ''}
-				<span>matching {`"${queryParams.ROOT}"`}</span>
+				matching
+				<button
+					class="transition-all hover:variant-filled-error hover:rounded hover:p-1 hover:px-2 hover:line-through"
+					on:click={() => {
+						let q = queryParams;
+						q.ROOT = '';
+						goto(`${base}/s?q=${generateInputString(q)}`);
+					}}
+				>
+					{queryParams.ROOT}
+				</button>
 			{/if}
 			{#if queryParams._details == 'i'}
-				<span>(detailed)</span>
+				<button
+					class="transition-all hover:variant-filled-error hover:rounded hover:p-1 hover:px-2 hover:line-through"
+					on:click={() => {
+						let q = queryParams;
+						delete q._details;
+						goto(`${base}/s?q=${generateInputString(q)}`);
+					}}
+				>
+					(detailed)
+				</button>
 			{/if}
 		{/if}
 	</h1>
 
-	<div class="flex gap-2">
+	<div class="flex space-x-2 flex-wrap">
 		<button
-			class="anchor hidden md:inline"
+			class="anchor"
 			use:contextMenu={{
 				initiator: 'left',
 				items: [
@@ -112,6 +131,14 @@
 				: 'Unsorted'}
 		</button>
 
+		<button
+			class="anchor"
+			on:click={() => ($userPreferencesStore.compact = !$userPreferencesStore.compact)}
+		>
+		<span class="inline md:hidden">{$userPreferencesStore.compact ? 'Show icons' : 'Hide icons'}</span>
+		<span class="md:inline hidden">{$userPreferencesStore.compact ? 'List view' : 'Compact view'}</span>
+		</button>
+
 		{#if queryParams._details != 'i'}
 			<button
 				class="anchor hidden md:inline"
@@ -141,13 +168,19 @@
 		'@details' to get technical details on each package?
 	</p>
 {:else if state == 'ready'}
-	<dl class="grid grid-cols-1 gap-2 lg:grid-cols-2">
+	<dl
+		class="grid grid-cols-1 gap-2"
+		class:lg:grid-cols-2={!$userPreferencesStore.compact}
+		class:md:grid-cols-2={$userPreferencesStore.compact}
+		class:lg:grid-cols-3={$userPreferencesStore.compact}
+	>
 		<PackageList
 			p={resultedFilter}
 			showAvatar={!queryParams.author}
 			showName={!queryParams.author}
 			showDetails={queryParams._details == 'i'}
 			sortBy={$userPreferencesStore.sortBy}
+			compact={$userPreferencesStore.compact}
 		/>
 	</dl>
 {:else if state == 'fail'}
