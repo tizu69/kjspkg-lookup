@@ -40,6 +40,10 @@
 	$: resultedFilter = queryParams.author ? filteredAuthor : $packageStatusStore.search.d;
 </script>
 
+<svelte:head>
+	<title>{$page.url.searchParams.get('q') || 'Search'} - KJSPKG Lookup</title>
+</svelte:head>
+
 <div class="mt-4 flex justify-between">
 	<h1 class="h3">
 		{#if !$page.url.searchParams.get('q')}

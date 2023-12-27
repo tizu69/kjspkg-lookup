@@ -144,8 +144,7 @@
 			bind:value={searched}
 			on:focus={() => (showOverlay = true)}
 			on:blur={() => (showOverlay = false)}
-			on:change={() =>
-				goto(base + `/s?q=${encodeURIComponent(searched || '')}`, { keepFocus: true })}
+			on:change={() => goto(base + `/s?q=${encodeURIComponent(searched || '')}`)}
 		/>
 	</div>
 

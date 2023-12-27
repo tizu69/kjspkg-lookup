@@ -85,6 +85,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>{packageNameToReadableFormat($page.url.searchParams.get('id') ?? 'no-name')} - KJSPKG Lookup</title>
+</svelte:head>
+
 {#if state == 'loading'}
 	<CenterLoader />
 {:else if state == 'ready'}
