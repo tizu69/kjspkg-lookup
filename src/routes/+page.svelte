@@ -18,8 +18,3 @@
 	This website serves as a means to share KJSPKG packages more easily. Use the search bar above to
 	search for packages, or <a href="{base}/s" class="anchor">browse all packages</a>.
 </p>
-<p class="text-center">
-	Think something's missing? Please report it to us. For the time being, you can alternatively use
-	the old <a href="{base}/legacy/index.html" class="anchor">legacy lookup</a>. Note that the legacy
-	lookup will be dropped in the future.
-</p>
