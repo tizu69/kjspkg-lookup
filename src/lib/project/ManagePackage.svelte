@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import consts from '$lib/consts';
-	import { clipboard, popup } from '@skeletonlabs/skeleton';
-	import { getToastStore } from '@skeletonlabs/skeleton';
+	import { clipboard, getToastStore, popup } from '@skeletonlabs/skeleton';
 
 	const toastStore = getToastStore();
 
@@ -24,8 +22,7 @@
 					background: 'variant-filled-success'
 				})}
 		>
-			kjspkg {t}
-			{name}
+			kjspkg {t} {name}
 		</button>
 	{:else}
 		<hr />
