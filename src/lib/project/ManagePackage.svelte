@@ -1,19 +1,35 @@
 <script lang="ts">
 	import consts from '$lib/consts';
+	import { markdownInline } from '$lib/utils';
 	import { clipboard, getToastStore, popup } from '@skeletonlabs/skeleton';
 
 	const toastStore = getToastStore();
 
 	export let name = 'no-name';
 	export let link = '';
+
+	const options = [
+		// name, text
+		{
+			n: 'install',
+			t: `In case you aren't aware, you need the [KJSPKG](${consts.KJSPKG_README}) tool to install this package!`
+		},
+		{
+			n: 'remove',
+			t: `Got an issue? Need help? Use this packages [issue tracker](${link}) to let us know!`
+		},
+		{ n: 'update' },
+		null,
+		{ n: 'pkg' }
+	];
 </script>
 
-{#each ['install', 'remove', 'update', '', 'pkg'] as t}
-	{#if t}
+{#each options as o}
+	{#if o}
 		<button
-			class="code pt-1 text-left *:pointer-events-none hover:brightness-110 active:scale-95"
-			use:popup={{ event: 'click', placement: 'top', target: 'copy/' + t }}
-			use:clipboard={`kjspkg ${t} ${name}`}
+			class="code pt-1 text-left hover:brightness-110 active:scale-95"
+			use:popup={{ event: 'click', placement: 'top', target: 'copy/' + o.n }}
+			use:clipboard={`kjspkg ${o.n} ${name}`}
 			on:click={() =>
 				toastStore.trigger({
 					message: 'Copied to clipboard!',
@@ -22,35 +38,20 @@
 					background: 'variant-filled-success'
 				})}
 		>
-			kjspkg {t} {name}
+			kjspkg {o.n}
+			{name}
 		</button>
+
+		{#if o.t}
+			<div
+				class="card variant-glass-surface max-w-96 p-4 !rounded-container-token style-markdown"
+				data-popup="copy/{o.n}"
+				style="opacity: 0;"
+			>
+				{@html markdownInline(o.t)}
+			</div>
+		{/if}
 	{:else}
 		<hr />
 	{/if}
 {/each}
-
-<div
-	class="card variant-glass-surface max-w-96 p-4 !rounded-container-token"
-	data-popup="copy/install"
-	style="opacity: 0;"
->
-	<p>
-		In case you aren't aware, you need the
-		<a href={consts.KJSPKG_README} class="anchor">KJSPKG</a>
-		tool to install this package!
-	</p>
-</div>
-<div
-	class="card variant-glass-surface max-w-96 p-4 !rounded-container-token"
-	data-popup="copy/remove"
-	style="opacity: 0;"
->
-	<p>
-		Got an issue? Need help? Use this packages
-		<a href={link} class="anchor">issue tracker</a>
-		to let us know!
-	</p>
-</div>
-
-<div data-popup="copy/update" style="opacity: 0;" />
-<div data-popup="copy/pkg" style="opacity: 0;" />
