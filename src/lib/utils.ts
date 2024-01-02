@@ -1,10 +1,8 @@
-import { goto } from '$app/navigation';
-import { base } from '$app/paths';
-import { page } from '$app/stores';
+import { partial_ratio } from 'fuzzball';
 import markdownit from 'markdown-it';
 import { get } from 'svelte/store';
 import consts from './consts';
-import { packageListStore } from './stores';
+import { packageListStore, packageStatStore } from './stores';
 
 // @ts-expect-error full exists, thanks crappy types
 import { full as emoji } from 'markdown-it-emoji';
@@ -28,7 +26,7 @@ export function filterObjectByKey(
 ): { [key: string]: string } {
 	const filteredObj: { [key: string]: string } = {};
 	for (const [key, value] of Object.entries(obj)) {
-		if (key.includes(searchString)) {
+		if (partial_ratio(searchString, key) > 80) {
 			filteredObj[key] = value;
 		}
 	}
@@ -37,6 +35,21 @@ export function filterObjectByKey(
 
 export async function initPackageList(): Promise<boolean> {
 	if (get(packageListStore) == undefined) {
+		setTimeout(async () => {
+			try {
+				for (const k of ['views', 'downloads']) {
+					const res = await fetch(consts.AUTOMATIN_URL + `?stat=${k}`);
+					const json = await res.json();
+					packageStatStore.update((stat) => {
+						stat[k as 'views' | 'downloads'] = json;
+						return stat;
+					});
+				}
+			} catch (err) {
+				console.error(err);
+			}
+		});
+
 		try {
 			const res = await fetch(consts.PACKAGES);
 			const json = await res.json();
@@ -85,14 +98,4 @@ export { generateInputString, parseInputString };
 
 export function removeBase(target: string, base: string): string {
 	return target.replace(base, '');
-}
-
-export function goBack() {
-	const sPage = get(page);
-
-	for (const path of [removeBase(sPage.url.pathname, base), sPage.route.id])
-		if (path && consts.WHERE_TO[path]) {
-			goto(base + consts.WHERE_TO[path]);
-			break;
-		}
 }

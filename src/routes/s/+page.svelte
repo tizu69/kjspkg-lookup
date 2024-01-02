@@ -3,28 +3,35 @@
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
 	import consts from '$lib/consts';
-	import { packageStatusStore, packageListStore, userPreferencesStore } from '$lib/stores';
+	import { Author, CenterLoader, IconBlank, PackageList } from '$lib/index';
+	import { contextMenu } from '$lib/overlays/contextMenu';
+	import { currentSearchStore, packageListStore, packageStatusStore, userPreferencesStore } from '$lib/stores';
 	import {
 		filterObjectByKey,
 		generateInputString,
 		initPackageList,
 		parseInputString
 	} from '$lib/utils';
+	import {
+		IconCheck,
+		IconClearAll,
+		IconHome,
+		IconLayoutDashboard,
+		IconListDetails
+	} from '@tabler/icons-svelte';
 	import { onMount } from 'svelte';
-	import { contextMenu } from '$lib/overlays/contextMenu';
-	import { IconCheck } from '@tabler/icons-svelte';
-	import { IconBlank, PackageList, Author, CenterLoader } from '$lib/index';
 
 	let state: 'loading' | 'ready' | 'fail' = $packageListStore == undefined ? 'loading' : 'ready';
 
 	onMount(async () => {
 		state = (await initPackageList()) ? 'ready' : 'fail';
+		$currentSearchStore = $page.url.searchParams.get('q') ?? '';
 	});
 
-	$: queryParams = parseInputString($page.url.searchParams.get('q') ?? '');
+	$: queryParams = parseInputString($currentSearchStore);
 
 	$: $packageStatusStore.search.d = Object.entries(
-		(!$page.url.searchParams.get('q')
+		(!$currentSearchStore
 			? $packageListStore
 			: filterObjectByKey($packageListStore ?? {}, queryParams.ROOT)) ?? {}
 	);
@@ -38,15 +45,76 @@
 	});
 
 	$: resultedFilter = queryParams.author ? filteredAuthor : $packageStatusStore.search.d;
+
+	/////////////////////////////////////
+
+	let optionsHeader: HTMLDivElement;
+	const observer = new IntersectionObserver(
+		([e]) => {
+			// e.target.classList.toggle('backdrop-brightness-75', e.intersectionRatio < 1);
+			e.target.classList.toggle('border-b', e.intersectionRatio < 1);
+		},
+		{ threshold: [1] }
+	);
+	$: optionsHeader ? observer.observe(optionsHeader) : '';
 </script>
 
 <svelte:head>
-	<title>{$page.url.searchParams.get('q') || 'Search'} - KJSPKG Lookup</title>
+	<title>{$currentSearchStore || 'Search'} - KJSPKG Lookup</title>
 </svelte:head>
 
-<div class="mt-4 md:flex justify-between">
+<div class="flex flex-wrap gap-2">
+	{#if $currentSearchStore}
+		<button
+			class="variant-soft-secondary btn w-fit hover:variant-filled-primary"
+			on:click={() => goto(base + '/s')}
+		>
+			<IconClearAll class="mr-2" />
+			Clear filters
+		</button>
+	{:else}
+		<button
+			class="variant-soft-secondary btn w-fit hover:variant-filled-primary"
+			on:click={() => goto(base + '/home')}
+		>
+			<IconHome class="mr-2" />
+			Go home
+		</button>
+	{/if}
+	<button
+		class="variant-soft-secondary btn w-fit hover:variant-filled-primary"
+		on:click={() => ($userPreferencesStore.compact = !$userPreferencesStore.compact)}
+	>
+		<IconLayoutDashboard class="mr-2" />
+		<span class="inline md:hidden">
+			{$userPreferencesStore.compact ? 'Show icons' : 'Hide icons'}
+		</span>
+		<span class="hidden md:inline">
+			{$userPreferencesStore.compact ? 'Use list view' : 'Use compact view'}
+		</span>
+	</button>
+	{#if queryParams._details != 'i'}
+		<button
+			class="variant-soft-secondary btn w-fit hover:variant-filled-primary"
+			on:click={() => {
+				let q = queryParams;
+				q._details = 'i';
+				q.ROOT == '*' && (q.ROOT = '');
+				goto(`${base}/s?q=${generateInputString(q)}`);
+			}}
+		>
+			<IconListDetails class="mr-2" />
+			Show details
+		</button>
+	{/if}
+</div>
+
+<div
+	class="sticky top-[-1px] z-10 justify-between border-surface-600 bg-gradient-to-t from-transparent to-surface-900 p-2 pt-[calc(1rem_+_1px)] backdrop-blur rounded-bl-container-token rounded-br-container-token md:flex"
+	bind:this={optionsHeader}
+>
 	<h1 class="h3">
-		{#if !$page.url.searchParams.get('q')}
+		{#if !$currentSearchStore}
 			Found <span>{$packageStatusStore.search.d.length}</span> packages
 		{:else}
 			Found
@@ -95,7 +163,7 @@
 		{/if}
 	</h1>
 
-	<div class="flex space-x-2 flex-wrap">
+	<div class="flex flex-wrap space-x-2">
 		<button
 			class="anchor"
 			use:contextMenu={{
@@ -108,15 +176,15 @@
 					{
 						label: 'Author (a-z)',
 						name: 'author'
-					}
-					/* {
+					},
+					{
 						label: 'Download count',
 						name: 'downloads'
 					},
 					{
 						label: 'Views',
 						name: 'views'
-					} */
+					}
 				].map(({ label, name }) => ({
 					type: 'ITEM',
 					label,
@@ -130,28 +198,6 @@
 				? `Sorted by ${$userPreferencesStore.sortBy}`
 				: 'Unsorted'}
 		</button>
-
-		<button
-			class="anchor"
-			on:click={() => ($userPreferencesStore.compact = !$userPreferencesStore.compact)}
-		>
-		<span class="inline md:hidden">{$userPreferencesStore.compact ? 'Show icons' : 'Hide icons'}</span>
-		<span class="md:inline hidden">{$userPreferencesStore.compact ? 'List view' : 'Compact view'}</span>
-		</button>
-
-		{#if queryParams._details != 'i'}
-			<button
-				class="anchor hidden md:inline"
-				on:click={() => {
-					let q = queryParams;
-					q._details = 'i';
-					q.ROOT == '*' && (q.ROOT = '');
-					goto(`${base}/s?q=${generateInputString(q)}`);
-				}}
-			>
-				Show details
-			</button>
-		{/if}
 	</div>
 </div>
 
@@ -182,6 +228,14 @@
 			sortBy={$userPreferencesStore.sortBy}
 			compact={$userPreferencesStore.compact}
 		/>
+		{#if $userPreferencesStore.visitState == 4 && !$packageStatusStore.search.v}
+			<button
+				class="card flex items-center justify-center p-4 hover:variant-soft-success"
+				on:click={() => ($userPreferencesStore.visitState = 5)}
+			>
+				Changed your mind? Click to be redirected to this page on launch instead.
+			</button>
+		{/if}
 	</dl>
 {:else if state == 'fail'}
 	<p>Something went wrong</p>

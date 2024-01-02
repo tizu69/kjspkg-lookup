@@ -28,7 +28,7 @@
 	{#if o}
 		<button
 			class="code pt-1 text-left hover:brightness-110 active:scale-95"
-			use:popup={{ event: 'click', placement: 'top', target: 'copy/' + o.n }}
+			use:popup={{ event: 'click', placement: 'right', target: 'copy/' + o.n }}
 			use:clipboard={`kjspkg ${o.n} ${name}`}
 			on:click={() =>
 				toastStore.trigger({

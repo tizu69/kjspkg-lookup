@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { CenterLoader } from '$lib';
 	import consts from '$lib/consts';
+	import { packageStatStore } from '$lib/stores';
 	import { markdownInline } from '$lib/utils';
 	import { onMount } from 'svelte';
 
 	export let locator: string;
 	export let popupId: string;
+	export let name: string;
 
 	let thisPackage: { [k: string]: any } = {};
 	let state: 'loading' | 'ready' | 'fail' = 'loading';
@@ -18,7 +20,9 @@
 		null
 	];
 
+
 	onMount(async () => {
+
 		locatorInfo = locator.match(consts.LOCATOR_REGEX)!;
 
 		const author = locatorInfo[1];
@@ -37,6 +41,9 @@
 			state = 'fail';
 		}
 	});
+
+	$: statDownloads = $packageStatStore.downloads[name] ?? 0;
+	$: statViews = $packageStatStore.views[name] ?? 0;
 </script>
 
 <div
@@ -49,11 +56,15 @@
 		{#if state == 'loading'}
 			<CenterLoader />
 		{:else if state == 'ready'}
-			<dd class="style-markdown blockquote border-l-primary-500 *:pointer-events-none">
-				{@html markdownInline(thisPackage.description)}
-			</dd>
-			<dd class="ml-6 text-sm opacity-50">
-				{locatorInfo[1]}
+			<dd
+				class="style-markdown blockquote flex flex-col gap-1 border-l-primary-500 p-4 *:pointer-events-none"
+			>
+				<span>{@html markdownInline(thisPackage.description)}</span>
+				<span class="select-none text-sm opacity-50">
+					<span>{statDownloads} downloads</span> &bull;
+					<span>{statViews} views</span> &bull;
+					<span>by {locatorInfo[1]}</span>
+				</span>
 			</dd>
 		{:else if state == 'fail'}
 			<dd>Something went wrong (this package doesn't seem to exist)</dd>

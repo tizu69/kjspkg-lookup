@@ -59,5 +59,5 @@
 		</span>
 	</a>
 
-	<PackagePreview popupId="dependency/{t}" locator={l} />
+	<PackagePreview popupId="dependency/{t}" locator={l} name={t} />
 {/if}

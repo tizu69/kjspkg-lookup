@@ -16,6 +16,9 @@
 
 	initializeStores();
 
+	/** @type {import('./$types').PageData} */
+	export let data: any;
+
 	onMount(() => {
 		if ($userPreferencesStore.lightMode) document.documentElement.classList.remove('dark');
 		document.body.dataset.theme = $userPreferencesStore.theme ?? 'kjspkg';
@@ -61,8 +64,8 @@
 		<Sidebar />
 	</svelte:fragment>
 
-	<div class="container mx-auto max-w-screen-lg p-4 space-y-4 md:p-10">
-		{#key $page.url.pathname}
+	<div class="container mx-auto max-w-screen-lg space-y-4 p-4 md:p-10 relative">
+		{#key data.href}
 			<slot />
 		{/key}
 	</div>
@@ -86,7 +89,7 @@
 			>
 		</span>
 
-		<span class="hidden text-sm opacity-50 md:inline">
+		<span class="hidden text-sm opacity-50 md:inline mt-auto">
 			Website designed with love by <a
 				href="https://github.com/tizu69"
 				class="anchor no-underline"

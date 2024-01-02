@@ -2,6 +2,7 @@
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
 	import consts from '$lib/consts';
+	import { packageStatStore } from '$lib/stores';
 	import { packageNameToReadableFormat } from '$lib/utils';
 	import { createEventDispatcher } from 'svelte';
 	import { flip } from 'svelte/animate';
@@ -36,6 +37,14 @@
 					
 					return a == b ? 0 : a < b ? -1 : 1;
 				})
+			case 'downloads':
+			case 'views':
+				return [...alphabetic].sort((_a, _b) => {
+					const a = $packageStatStore[sortBy as 'downloads' | 'views'][_a[0]] ?? 0;
+					const b = $packageStatStore[sortBy as 'downloads' | 'views'][_b[0]] ?? 0;
+
+					return a == b ? 0 : a < b ? 1 : -1;
+				})
 			default:
 				return [];
 		}
@@ -49,25 +58,28 @@
 	{@const branch = locatorInfo[3]}
 	{@const path = locatorInfo[4]}
 
+	{@const statDownloads = $packageStatStore.downloads[name] ?? 0}
+	{@const statViews = $packageStatStore.views[name] ?? 0}
+
 	<a
 		href={`${base}/p?id=${encodeURIComponent(name)}`}
 		class="card flex p-4 hover:variant-soft-primary"
 		class:flex-col={compact}
 		on:click={() => dispatch('select', name)}
 		class:!variant-filled-primary={$page.url.searchParams.get('id') == name}
-		animate:flip={{ delay: i * 25, duration: 1000 }}
-		transition:fade={{ delay: i * 25, duration: 300 }}
+		animate:flip={{ duration: 500 }}
+		transition:fade={{ duration: 300 }}
 	>
 		{#if showAvatar && !compact}
 			<img
 				src={consts.AVATARS + author}
 				alt="author's profile avatar"
 				class="my-auto mr-4 aspect-square rounded-token h-8"
-				in:slide={{ axis: 'x', delay: i * 25 }}
+				in:slide={{ axis: 'x' }}
 			/>
 		{/if}
-		<dl>
-			<dt class="select-text font-bold">{packageNameToReadableFormat(name)}</dt>
+		<dl class="my-auto">
+			<dt class="select-text font-bold mb-1">{packageNameToReadableFormat(name)}</dt>
 			<dd class="text-sm opacity-50">
 				{#if branch && showDetails}
 					on branch <span class="select-text">{branch.substring(1)}</span>
@@ -82,6 +94,10 @@
 				{#if showName}
 					by <span class="select-text">{author}</span>
 				{/if}
+			</dd>
+			<dd class="text-sm opacity-50">
+				<span>{statDownloads} download{statDownloads == 1 ? '' : 's'}</span> &bull;
+				<span>{statViews} view{statViews == 1 ? '' : 's'}</span>
 			</dd>
 		</dl>
 	</a>

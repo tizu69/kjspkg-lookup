@@ -40,7 +40,7 @@ body {
 	}
 
 	.style-markdown pre {
-		@apply bg-surface-backdrop-token pre w-full overflow-scroll;
+		@apply bg-surface-backdrop-token pre w-full overflow-auto text-nowrap;
 	}
 	.style-markdown pre > code {
 		@apply select-text;
@@ -65,6 +65,7 @@ body {
 
 	.style-markdown a > img[alt='kjspkg-available'] {
 		animation: kjspkgBadge 2s infinite ease-out;
+		animation-delay: 1s;
 		animation-iteration-count: 1;
 	}
 }

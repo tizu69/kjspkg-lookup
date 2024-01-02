@@ -4,10 +4,9 @@
 	import { page } from '$app/stores';
 	import { CenterLoader, Dependency, ManagePackage } from '$lib';
 	import consts from '$lib/consts';
-	import { currentAuthorStore, packageListStore } from '$lib/stores';
+	import { currentAuthorStore, packageListStore, packageStatStore } from '$lib/stores';
 	import {
 		capitalizeFirstLetter,
-		goBack,
 		initPackageList,
 		markdown,
 		markdownInline,
@@ -17,6 +16,8 @@
 	import { onMount } from 'svelte';
 
 	const toastStore = getToastStore();
+
+	$: id = $page.url.searchParams.get('id');
 
 	let thisPackage: { [k: string]: any } = {};
 	let state: 'loading' | 'ready' | 'fail' = 'loading';
@@ -34,11 +35,17 @@
 		issueLink = '';
 
 	onMount(async () => {
-		if (!(await initPackageList())) goto(base + '/s');
+		if (!(await initPackageList())) return goto(base + '/s');
 
-		locator = ($packageListStore ?? {})[$page.url.searchParams.get('id') ?? ''];
+		if (!id) {
+			state = 'fail';
+			return goto(base + '/s');
+		}
+
+		locator = ($packageListStore ?? {})[id ?? ''];
 		if (!locator) {
 			state = 'fail';
+			return goto(base + '/s');
 		}
 
 		locatorInfo = locator.match(consts.LOCATOR_REGEX)!;
@@ -57,14 +64,15 @@
 			state = 'ready';
 		} catch {
 			state = 'fail';
+			return goto(base + '/s');
 		}
 
 		$currentAuthorStore = author ?? '';
 
-		/* if (!$packageStatusStore.back.d.some((p) => p[0] == $page.url.searchParams.get('id')))
+		/* if (!$packageStatusStore.back.d.some((p) => p[0] == id))
 			$packageStatusStore.back.d = [
 				...$packageStatusStore.back.d,
-				...$packageStatusStore.search.d.filter((p) => p[0] == $page.url.searchParams.get('id'))
+				...$packageStatusStore.search.d.filter((p) => p[0] == id)
 			]; */
 
 		issueLink = `https://github.com/${author}/${repo}/issues`;
@@ -82,79 +90,101 @@
 			const text = await res.text();
 			docs = markdown(text);
 		} catch {}
+
+		try {
+			const res = await fetch(consts.AUTOMATIN_URL + `?stat=views&id=${id}`, { method: 'PUT' });
+			const text = await res.text();
+
+			if (!$packageStatStore.views[id]) $packageStatStore.views[id] = 0;
+			if (text == '0') $packageStatStore.views[id]++;
+		} catch (err) {
+			console.error(err);
+		}
 	});
 </script>
 
 <svelte:head>
-	<title>{packageNameToReadableFormat($page.url.searchParams.get('id') ?? 'no-name')} - KJSPKG Lookup</title>
+	<title>{packageNameToReadableFormat(id ?? 'no-name')} - KJSPKG Lookup</title>
 </svelte:head>
 
 {#if state == 'loading'}
 	<CenterLoader />
-{:else if state == 'ready'}
-	<h1 class="font-bold text-center h2">
+{:else if state == 'ready' && id}
+	{@const statDownloads = $packageStatStore.downloads[id] ?? 0}
+	{@const statViews = $packageStatStore.views[id] ?? 0}
+
+	<h1 class="h2 text-center font-bold">
 		<a
 			href={`https://github.com/${locatorInfo[1]}/${locatorInfo[2]}`}
-			class="no-underline select-text anchor"
+			class="anchor select-text no-underline"
 			target="_blank"
 		>
-			{packageNameToReadableFormat($page.url.searchParams.get('id') ?? 'no-name') ?? 'This package'}
+			{packageNameToReadableFormat(id ?? 'no-name') ?? 'This package'}
 		</a>
 	</h1>
 
-	<div class="style-markdown blockquote w-full select-text overflow-x-scroll p-4 *:select-text">
-		{@html markdownInline(thisPackage.description)}
+	<div class="style-markdown blockquote flex w-full select-text flex-col gap-1 overflow-x-auto p-4">
+		<span class="select-text *:select-text">
+			{@html markdownInline(thisPackage.description)}
+		</span>
+		<span class="text-sm opacity-50">
+			<span>{statDownloads} download{statDownloads == 1 ? '' : 's'}</span> &bull;
+			<span>{statViews} view{statViews == 1 ? '' : 's'}</span>
+		</span>
 	</div>
 
 	<div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
-		<a class="flex p-4 card hover:variant-soft-primary" href={base + `/s?q=@author:${locatorInfo[1]}`}>
+		<a
+			class="card flex p-4 hover:variant-soft-primary"
+			href={base + `/s?q=@author:${locatorInfo[1]}`}
+		>
 			<img
 				src={consts.AVATARS + locatorInfo[1]}
 				alt="author's profile afirst child cssvatar"
-				class="h-8 my-auto mr-4 aspect-square rounded-token"
+				class="my-auto mr-4 aspect-square h-8 rounded-token"
 			/>
 			<dl>
 				<dt class="text-sm opacity-50">Created by</dt>
-				<dd class="font-bold select-text">
-					{locatorInfo[1] != thisPackage.author ? `${thisPackage.author}` : ''}
-					({locatorInfo[1]})
+				<dd class="select-text font-bold">
+					{thisPackage.author}
+					{locatorInfo[1] != thisPackage.author ? `(${locatorInfo[1]})` : ''}
 				</dd>
 			</dl>
 		</a>
 
-		<div class="p-4 card">
+		<div class="card p-4">
 			<dt class="text-sm opacity-50">Available for</dt>
-			<dd class="flex gap-1 flex-wrap">
+			<dd class="flex flex-wrap gap-1">
 				{#each thisPackage.modloaders as t}
-					<span class="select-text variant-filled-primary badge">{capitalizeFirstLetter(t)}</span>
+					<span class="variant-filled-primary badge select-text">{capitalizeFirstLetter(t)}</span>
 				{/each}
 				&bull;
 				{#each thisPackage.versions as t}
-					<span class="select-text variant-filled-primary badge">{`1.${+t + 10}`}</span>
+					<span class="variant-filled-primary badge select-text">{`1.${+t + 10}`}</span>
 				{/each}
 			</dd>
 		</div>
 
 		<!-- <CodeBlock
 			language="Install package"
-			code={'kjspkg install ' + $page.url.searchParams.get('id')}
+			code={'kjspkg install ' + id}
 			background="variant-soft w-full"
 			buttonCopied="ok have fun"
 		/> -->
 
-		<div class="hidden p-4 space-y-2 card md:block">
+		<div class="card hidden space-y-2 p-4 md:block">
 			<dt class="text-sm opacity-50">Manage package (click to copy)</dt>
 			<dd class="flex flex-col gap-1">
-				<ManagePackage name={$page.url.searchParams.get('id') ?? 'no-name'} link={issueLink} />
+				<ManagePackage name={id ?? 'no-name'} link={issueLink} />
 			</dd>
 		</div>
 
 		{#if thisPackage.dependencies.length > 0 || thisPackage.incompatibilities.length > 0}
-			<div class="p-4 space-y-2 card h-fit">
+			<div class="card h-fit space-y-2 p-4">
 				{#if thisPackage.dependencies.length > 0}
 					<dt class="text-sm opacity-50">Depends on</dt>
 					<dd class="flex w-full gap-1">
-						<dl class="w-full list-dl">
+						<dl class="list-dl w-full">
 							{#each thisPackage.dependencies as t}
 								<Dependency {t} />
 							{/each}
@@ -164,7 +194,7 @@
 				{#if thisPackage.incompatibilities.length > 0}
 					<dt class="text-sm opacity-50">Incompatible with</dt>
 					<dd class="flex w-full gap-1">
-						<dl class="w-full list-dl">
+						<dl class="list-dl w-full">
 							{#each thisPackage.incompatibilities as t}
 								<Dependency {t} />
 							{/each}
@@ -175,7 +205,7 @@
 		{/if}
 
 		{#if docs != ''}
-			<section class="p-4 space-y-4 card h-fit lg:col-span-2">
+			<section class="card h-fit space-y-4 p-4 lg:col-span-2">
 				<dt class="text-sm opacity-50">
 					<a href={docLoc} class="underline" target="_blank">README file</a>
 				</dt>
@@ -194,6 +224,8 @@
 			timeout: 5000,
 			background: 'variant-filled-error'
 		});
-		goBack();
-	})()}
+		history.back();
+
+		return undefined;
+	})() || 'Please wait, redirecting...'}
 {/if}

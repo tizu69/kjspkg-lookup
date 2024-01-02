@@ -4,30 +4,20 @@
 	import { page } from '$app/stores';
 	import { IconBlank } from '$lib';
 	import { AppBar } from '@skeletonlabs/skeleton';
-	import {
-		IconArrowLeft,
-		IconCheck,
-		IconColorSwatch,
-		IconGridDots,
-		IconSearch,
-		IconSettings
-	} from '@tabler/icons-svelte';
+	import { IconCheck, IconColorSwatch, IconSearch } from '@tabler/icons-svelte';
 	import consts from './consts';
 	import { contextMenu, type ContextMenuItem } from './overlays/contextMenu';
-	import { getPos, triggerOverlay } from './overlays/overlay';
-	import { userPreferencesStore } from './stores';
-	import { generateInputString, goBack, parseInputString } from './utils';
+	import { currentSearchStore, userPreferencesStore } from './stores';
+	import { parseInputString } from './utils';
 
 	function getQuery(): string {
 		return $page.route.id == '/s' ? $page.url.searchParams.get('q') ?? '' : '';
 	}
 
 	let searched = getQuery();
-	let showOverlay = false;
 	let allowSettingsClick = true;
 
 	let inputElement: HTMLInputElement;
-	let overlayTarget: HTMLDivElement;
 
 	afterNavigate(() => (searched = getQuery()));
 
@@ -102,7 +92,16 @@
 	$: queryParams = parseInputString(searched);
 </script>
 
-<svelte:window on:keypress={() => inputElement.focus()} />
+<svelte:window
+	on:keypress={(event) => {
+		if (
+			(event.keyCode >= 48 && event.keyCode <= 57) ||
+			(event.keyCode >= 65 && event.keyCode <= 90) ||
+			(event.keyCode >= 97 && event.keyCode <= 122)
+		)
+			inputElement.focus();
+	}}
+/>
 
 <AppBar
 	gridColumns="lg:grid-cols-3 grid-cols-[auto_1fr_auto]"
@@ -112,29 +111,14 @@
 	class="vt-none"
 >
 	<svelte:fragment slot="lead">
-		<span class="flex items-center gap-2">
-			{#if consts.WHERE_TO[$page.route.id ?? ''] != undefined}
-				<button class="btn-icon hover:variant-soft-primary" on:click={goBack}>
-					<IconArrowLeft />
-				</button>
-			{:else}
-				<button class="btn-icon hover:variant-soft-primary" on:click={() => goto(base + '/s')}>
-					<IconGridDots />
-				</button>
-			{/if}
-
-			<span class="hidden items-center gap-2 lg:flex">
-				<span class="divider-vertical lg:hidden" />
-
-				<img src={consts.LOGO} alt="logo" class="aspect-square h-8 rounded-token" />
-				KJSPKG Lookup
-			</span>
-		</span>
+		<a class="flex items-center gap-2" href={base}>
+			<img src={consts.LOGO} alt="logo" class="aspect-square h-8 rounded-token" />
+			<span class="hidden lg:inline">KJSPKG Lookup</span>
+		</a>
 	</svelte:fragment>
 
 	<div
 		class="input-group input-group-divider w-full grid-cols-[1fr] lg:w-fit lg:grid-cols-[auto_1fr]"
-		bind:this={overlayTarget}
 	>
 		<div class="hidden text-surface-400 lg:inline">
 			<IconSearch class="hidden lg:block" />
@@ -145,9 +129,12 @@
 			placeholder="Search for packages"
 			bind:this={inputElement}
 			bind:value={searched}
-			on:focus={() => (showOverlay = true)}
-			on:blur={() => (showOverlay = false)}
-			on:change={() => goto(base + `/s?q=${encodeURIComponent(searched || '')}`)}
+			on:input={() => ($currentSearchStore = searched)}
+			on:change={() => {
+				const query = encodeURIComponent(searched || '');
+				// if (query) $userPreferencesStore.lastSearched = query;
+				goto(base + `/s?q=${query}`);
+			}}
 		/>
 	</div>
 
@@ -161,42 +148,3 @@
 		</button>
 	</svelte:fragment>
 </AppBar>
-
-<!-- <div
-	use:triggerOverlay={{
-		pos: {
-			x: getPos(overlayTarget).x,
-			y: getPos(overlayTarget).y + getPos(overlayTarget).h + 8,
-			w: getPos(overlayTarget).w + 'px',
-			h: ''
-		},
-		visible: showOverlay && (!!queryParams.author || !!queryParams._details)
-	}}
-	class="card variant-glass-secondary absolute flex gap-1 p-2"
->
-	{#if queryParams.author}
-		<button
-			class="variant-soft chip hover:variant-filled-error hover:line-through"
-			on:click={() => {
-				let q = queryParams;
-				delete q.author;
-				goto(`${base}/s?q=${generateInputString(q)}`);
-			}}
-		>
-			by {queryParams.author}
-		</button>
-	{/if}
-
-	{#if queryParams._details}
-		<button
-			class="variant-soft chip hover:variant-filled-error hover:line-through"
-			on:click={() => {
-				let q = queryParams;
-				delete q._details;
-				goto(`${base}/s?q=${generateInputString(q)}`);
-			}}
-		>
-			detailed
-		</button>
-	{/if}
-</div> -->

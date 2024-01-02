@@ -1,24 +1,47 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
-	import { page } from '$app/stores';
-	import consts from '$lib/consts';
+	import { userPreferencesStore } from '$lib/stores';
+	import { getToastStore } from '@skeletonlabs/skeleton';
+	import { onMount } from 'svelte';
 
-	if ($page.url.hash != '') {
-		goto(base + `/p?id=${encodeURIComponent($page.url.hash.substring(1))}`);
-	}
+	const toastStore = getToastStore();
+
+	onMount(() => {
+		switch ($userPreferencesStore.visitState) {
+			case 0:
+				$userPreferencesStore.visitState = 1;
+				goto(base + '/home');
+				break;
+			case 1:
+				$userPreferencesStore.visitState = 2;
+				goto(base + '/home');
+				break;
+			case 2:
+				goto(base + '/home');
+				toastStore.trigger({
+					message: 'Do you wish to be redirected to the package list automatically?',
+					timeout: 30_000,
+					background: 'variant-filled-success',
+					action: {
+						label: 'Sure!',
+						response: () => setTimeout(() => ($userPreferencesStore.visitState = 5), 1)
+					},
+					callback(response) {
+						if (response.status == 'closed') $userPreferencesStore.visitState = 4;
+					}
+				});
+				break;
+			case 4:
+				goto(base + '/home');
+				break;
+			case 5:
+				goto(base + '/s');
+				break;
+			default:
+				$userPreferencesStore.visitState = 0;
+				goto(base + '/home');
+				break;
+		}
+	});
 </script>
-
-<svelte:head>
-	<title>KJSPKG Lookup</title>
-</svelte:head>
-
-<img src={consts.LOGO} alt="logo" class="mx-auto aspect-square h-32 rounded-token" />
-<h1 class="h1 text-center hover:hue-rotate">KJSPKG Lookup</h1>
-
-<hr />
-
-<p class="text-center">
-	This website serves as a means to share KJSPKG packages more easily. Use the search bar above to
-	search for packages, or <a href="{base}/s" class="anchor">browse all packages</a>.
-</p>
