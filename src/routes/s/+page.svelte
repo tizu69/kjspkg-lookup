@@ -31,7 +31,7 @@
 	$: queryParams = parseInputString($currentSearchStore);
 
 	$: $packageStatusStore.search.d = Object.entries(
-		(!$currentSearchStore
+		(!queryParams.ROOT
 			? $packageListStore
 			: filterObjectByKey($packageListStore ?? {}, queryParams.ROOT)) ?? {}
 	);
