@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import { HeaderBar, Sidebar } from '$lib/index';
 	import ContextMenu from '$lib/overlays/ContextMenu.svelte';
-	import { userPreferencesStore } from '$lib/stores';
+	import { currentScrollPosition, userPreferencesStore } from '$lib/stores';
 	import { AppShell, Modal, ProgressRadial, Toast, initializeStores } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
@@ -55,7 +55,15 @@
 	</div>
 {/if}
 
-<AppShell slotSidebarLeft="hidden xl:block" slotPageFooter="p-2 flex justify-between">
+<AppShell
+	slotSidebarLeft="hidden xl:block"
+	slotPageFooter="p-2 flex justify-between"
+	on:scroll={(e) =>
+		($currentScrollPosition = {
+			x: e.currentTarget.scrollLeft,
+			y: e.currentTarget.scrollTop
+		})}
+>
 	<svelte:fragment slot="header">
 		<HeaderBar />
 	</svelte:fragment>
@@ -64,7 +72,7 @@
 		<Sidebar />
 	</svelte:fragment>
 
-	<div class="container mx-auto max-w-screen-lg space-y-4 p-4 md:p-10 relative">
+	<div class="container relative mx-auto max-w-screen-lg space-y-4 p-4 md:p-10 min-h-full">
 		{#key data.href}
 			<slot />
 		{/key}
@@ -89,7 +97,7 @@
 			>
 		</span>
 
-		<span class="hidden text-sm opacity-50 md:inline mt-auto">
+		<span class="mt-auto hidden text-sm opacity-50 md:inline">
 			Website designed with love by <a
 				href="https://github.com/tizu69"
 				class="anchor no-underline"

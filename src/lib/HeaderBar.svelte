@@ -7,8 +7,9 @@
 	import { IconCheck, IconColorSwatch, IconSearch } from '@tabler/icons-svelte';
 	import consts from './consts';
 	import { contextMenu, type ContextMenuItem } from './overlays/contextMenu';
-	import { currentSearchStore, userPreferencesStore } from './stores';
+	import { currentScrollPosition, currentSearchStore, userPreferencesStore } from './stores';
 	import { parseInputString } from './utils';
+	import { fly } from 'svelte/transition';
 
 	function getQuery(): string {
 		return $page.route.id == '/s' ? $page.url.searchParams.get('q') ?? '' : '';
@@ -107,36 +108,39 @@
 	gridColumns="lg:grid-cols-3 grid-cols-[auto_1fr_auto]"
 	slotDefault="place-self-center"
 	slotTrail="place-self-end"
-	shadow="shadow-lg"
-	class="vt-none"
+	class="vt-none transition-colors"
+	background={$currentScrollPosition.y > 16 ? 'bg-surface-800/75' : 'bg-transparent'}
 >
 	<svelte:fragment slot="lead">
 		<a class="flex items-center gap-2" href={base}>
-			<img src={consts.LOGO} alt="logo" class="aspect-square h-8 rounded-token" />
+			<img src={consts.LOGO} alt="logo" class="aspect-square w-8 min-w-8 rounded-token" />
 			<span class="hidden lg:inline">KJSPKG Lookup</span>
 		</a>
 	</svelte:fragment>
 
-	<div
-		class="input-group input-group-divider w-full grid-cols-[1fr] lg:w-fit lg:grid-cols-[auto_1fr]"
-	>
-		<div class="hidden text-surface-400 lg:inline">
-			<IconSearch class="hidden lg:block" />
-		</div>
+	{#if !$page.route.id || !consts.NO_SEARCH.includes($page.route.id)}
+		<div
+			class="input-group input-group-divider w-full grid-cols-[1fr] lg:w-fit lg:grid-cols-[auto_1fr]"
+			transition:fly={{ y: -40 }}
+		>
+			<div class="hidden text-surface-400 lg:inline">
+				<IconSearch class="hidden lg:block" />
+			</div>
 
-		<input
-			type="search"
-			placeholder="Search for packages"
-			bind:this={inputElement}
-			bind:value={searched}
-			on:input={() => ($currentSearchStore = searched)}
-			on:change={() => {
-				const query = encodeURIComponent(searched || '');
-				// if (query) $userPreferencesStore.lastSearched = query;
-				goto(base + `/s?q=${query}`);
-			}}
-		/>
-	</div>
+			<input
+				type="search"
+				placeholder="Search for packages"
+				bind:this={inputElement}
+				bind:value={searched}
+				on:input={() => ($currentSearchStore = searched)}
+				on:change={() => {
+					const query = encodeURIComponent(searched || '');
+					// if (query) $userPreferencesStore.lastSearched = query;
+					goto(base + `/s?q=${query}`);
+				}}
+			/>
+		</div>
+	{/if}
 
 	<svelte:fragment slot="trail">
 		<button

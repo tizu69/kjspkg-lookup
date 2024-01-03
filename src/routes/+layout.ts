@@ -6,4 +6,4 @@ export const load = async (req) => {
 	return {
 		href: req.url.href
 	};
-}
+};

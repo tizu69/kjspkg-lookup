@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
-	import { CenterLoader, Dependency, ManagePackage } from '$lib';
+	import { Dependency, ManagePackage } from '$lib';
 	import consts from '$lib/consts';
 	import { currentAuthorStore, packageListStore, packageStatStore } from '$lib/stores';
 	import {
@@ -14,6 +14,7 @@
 	} from '$lib/utils';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
+	import { fly } from 'svelte/transition';
 
 	const toastStore = getToastStore();
 
@@ -108,7 +109,7 @@
 </svelte:head>
 
 {#if state == 'loading'}
-	<CenterLoader />
+	<div class="placeholder m-2 mx-auto w-32 animate-pulse" />
 {:else if state == 'ready' && id}
 	{@const statDownloads = $packageStatStore.downloads[id] ?? 0}
 	{@const statViews = $packageStatStore.views[id] ?? 0}
@@ -123,7 +124,10 @@
 		</a>
 	</h1>
 
-	<div class="style-markdown blockquote flex w-full select-text flex-col gap-1 overflow-x-auto p-4">
+	<div
+		class="style-markdown blockquote flex w-full select-text flex-col gap-1 overflow-x-auto p-4"
+		in:fly={{ y: 20 }}
+	>
 		<span class="select-text *:select-text">
 			{@html markdownInline(thisPackage.description)}
 		</span>
@@ -137,6 +141,7 @@
 		<a
 			class="card flex p-4 hover:variant-soft-primary"
 			href={base + `/s?q=@author:${locatorInfo[1]}`}
+			in:fly={{ y: 20 }}
 		>
 			<img
 				src={consts.AVATARS + locatorInfo[1]}
@@ -152,7 +157,7 @@
 			</dl>
 		</a>
 
-		<div class="card p-4">
+		<div class="card p-4" in:fly={{ y: 20 }}>
 			<dt class="text-sm opacity-50">Available for</dt>
 			<dd class="flex flex-wrap gap-1">
 				{#each thisPackage.modloaders as t}
@@ -172,7 +177,7 @@
 			buttonCopied="ok have fun"
 		/> -->
 
-		<div class="card hidden space-y-2 p-4 md:block">
+		<div class="card hidden space-y-2 p-4 md:block" in:fly={{ y: 20 }}>
 			<dt class="text-sm opacity-50">Manage package (click to copy)</dt>
 			<dd class="flex flex-col gap-1">
 				<ManagePackage name={id ?? 'no-name'} link={issueLink} />
@@ -180,7 +185,7 @@
 		</div>
 
 		{#if thisPackage.dependencies.length > 0 || thisPackage.incompatibilities.length > 0}
-			<div class="card h-fit space-y-2 p-4">
+			<div class="card h-fit space-y-2 p-4" in:fly|global={{ y: 20 }}>
 				{#if thisPackage.dependencies.length > 0}
 					<dt class="text-sm opacity-50">Depends on</dt>
 					<dd class="flex w-full gap-1">
@@ -205,7 +210,7 @@
 		{/if}
 
 		{#if docs != ''}
-			<section class="card h-fit space-y-4 p-4 lg:col-span-2">
+			<section class="card h-fit space-y-4 p-4 lg:col-span-2" in:fly={{ y: 20 }}>
 				<dt class="text-sm opacity-50">
 					<a href={docLoc} class="underline" target="_blank">README file</a>
 				</dt>

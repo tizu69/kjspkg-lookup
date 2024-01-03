@@ -13,6 +13,7 @@
 	export let p: [string, string][] = [];
 	/** name and author are sorted alphabetically. */
 	export let sortBy: '' | 'name' | 'author' | 'downloads' | 'views' = '';
+	export let maxCount = Infinity;
 	export let showAvatar = true;
 	export let showDetails = true;
 	export let showName = true;
@@ -32,11 +33,11 @@
 				return alphabetic;
 			case 'author':
 				return [...alphabetic].sort((_a, _b) => {
-					const a = (_a[1].match(consts.LOCATOR_REGEX)!)[1];
-					const b = (_b[1].match(consts.LOCATOR_REGEX)!)[1];
-					
+					const a = _a[1].match(consts.LOCATOR_REGEX)![1];
+					const b = _b[1].match(consts.LOCATOR_REGEX)![1];
+
 					return a == b ? 0 : a < b ? -1 : 1;
-				})
+				});
 			case 'downloads':
 			case 'views':
 				return [...alphabetic].sort((_a, _b) => {
@@ -44,14 +45,14 @@
 					const b = $packageStatStore[sortBy as 'downloads' | 'views'][_b[0]] ?? 0;
 
 					return a == b ? 0 : a < b ? 1 : -1;
-				})
+				});
 			default:
 				return [];
 		}
 	})();
 </script>
 
-{#each sortedP as [name, locator], i (name)}
+{#each [...sortedP].slice(0, maxCount) as [name, locator], i (name)}
 	{@const locatorInfo = locator.match(consts.LOCATOR_REGEX) ?? [null, null, null, null, null]}
 	{@const author = locatorInfo[1]}
 	{@const repo = locatorInfo[2]}
@@ -74,12 +75,12 @@
 			<img
 				src={consts.AVATARS + author}
 				alt="author's profile avatar"
-				class="my-auto mr-4 aspect-square rounded-token h-8"
+				class="my-auto mr-4 aspect-square h-8 rounded-token"
 				in:slide={{ axis: 'x' }}
 			/>
 		{/if}
 		<dl class="my-auto">
-			<dt class="select-text font-bold mb-1">{packageNameToReadableFormat(name)}</dt>
+			<dt class="mb-1 select-text font-bold">{packageNameToReadableFormat(name)}</dt>
 			<dd class="text-sm opacity-50">
 				{#if branch && showDetails}
 					on branch <span class="select-text">{branch.substring(1)}</span>

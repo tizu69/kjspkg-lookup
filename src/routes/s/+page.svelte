@@ -3,22 +3,21 @@
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
 	import consts from '$lib/consts';
-	import { Author, CenterLoader, IconBlank, PackageList } from '$lib/index';
+	import { Author, IconBlank, PackageList } from '$lib/index';
 	import { contextMenu } from '$lib/overlays/contextMenu';
-	import { currentSearchStore, packageListStore, packageStatusStore, userPreferencesStore } from '$lib/stores';
+	import {
+		currentSearchStore,
+		packageListStore,
+		packageStatusStore,
+		userPreferencesStore
+	} from '$lib/stores';
 	import {
 		filterObjectByKey,
 		generateInputString,
 		initPackageList,
 		parseInputString
 	} from '$lib/utils';
-	import {
-		IconCheck,
-		IconClearAll,
-		IconHome,
-		IconLayoutDashboard,
-		IconListDetails
-	} from '@tabler/icons-svelte';
+	import { IconCheck, IconClearAll, IconHome, IconLayoutDashboard } from '@tabler/icons-svelte';
 	import { onMount } from 'svelte';
 
 	let state: 'loading' | 'ready' | 'fail' = $packageListStore == undefined ? 'loading' : 'ready';
@@ -93,24 +92,10 @@
 			{$userPreferencesStore.compact ? 'Use list view' : 'Use compact view'}
 		</span>
 	</button>
-	{#if queryParams._details != 'i'}
-		<button
-			class="variant-soft-secondary btn w-fit hover:variant-filled-primary"
-			on:click={() => {
-				let q = queryParams;
-				q._details = 'i';
-				q.ROOT == '*' && (q.ROOT = '');
-				goto(`${base}/s?q=${generateInputString(q)}`);
-			}}
-		>
-			<IconListDetails class="mr-2" />
-			Show details
-		</button>
-	{/if}
 </div>
 
 <div
-	class="sticky top-[-1px] z-10 justify-between border-surface-600 bg-gradient-to-t from-transparent to-surface-900 p-2 pt-[calc(1rem_+_1px)] backdrop-blur rounded-bl-container-token rounded-br-container-token md:flex"
+	class="sticky top-[-1px] z-10 justify-between border-surface-600 bg-surface-900 p-2 pt-[calc(1rem_+_1px)] backdrop-blur rounded-bl-container-token rounded-br-container-token md:flex"
 	bind:this={optionsHeader}
 >
 	<h1 class="h3">
@@ -169,29 +154,46 @@
 			use:contextMenu={{
 				initiator: 'left',
 				items: [
-					{
-						label: 'Name (a-z)',
-						name: 'name'
-					},
-					{
-						label: 'Author (a-z)',
-						name: 'author'
-					},
-					{
-						label: 'Download count',
-						name: 'downloads'
-					},
-					{
-						label: 'Views',
-						name: 'views'
-					}
-				].map(({ label, name }) => ({
-					type: 'ITEM',
-					label,
-					icon: $userPreferencesStore.sortBy == name ? IconCheck : IconBlank,
 					// @ts-expect-error me lazy. be like me.
-					action: () => ($userPreferencesStore.sortBy = name)
-				}))
+					...[
+						{
+							label: 'Name (a-z)',
+							name: 'name'
+						},
+						{
+							label: 'Author (a-z)',
+							name: 'author'
+						},
+						{
+							label: 'Download count',
+							name: 'downloads'
+						},
+						{
+							label: 'Views',
+							name: 'views'
+						}
+					].map(({ label, name }) => ({
+						type: 'ITEM',
+						label,
+						icon: $userPreferencesStore.sortBy == name ? IconCheck : IconBlank,
+						// @ts-expect-error me lazy. be like me.
+						action: () => ($userPreferencesStore.sortBy = name)
+					})),
+					// @ts-expect-error me lazy. be like me.
+					{ type: 'SEPARATOR' },
+					{
+						// @ts-expect-error me lazy. be like me.
+						type: 'ITEM',
+						label: 'Show details',
+						icon: queryParams._details == 'i' ? IconCheck : IconBlank,
+						action: () => {
+							let q = queryParams;
+							if (queryParams._details == 'i') delete q._details;
+							else q._details = 'i';
+							goto(`${base}/s?q=${generateInputString(q)}`);
+						}
+					}
+				]
 			}}
 		>
 			{$userPreferencesStore.sortBy != ''
@@ -206,7 +208,16 @@
 {/if}
 
 {#if state == 'loading'}
-	<CenterLoader />
+	<dl
+		class="grid grid-cols-1 gap-2"
+		class:lg:grid-cols-2={!$userPreferencesStore.compact}
+		class:md:grid-cols-2={$userPreferencesStore.compact}
+		class:lg:grid-cols-3={$userPreferencesStore.compact}
+	>
+		{#each Array(5) as _}
+			<div class="placeholder h-24 w-full animate-pulse rounded-container-token" />
+		{/each}
+	</dl>
 {:else if state == 'ready' && resultedFilter.length == 0}
 	<p>Here, have a cookie, if that makes you feel any better: 🍪</p>
 	<p class="text-sm opacity-50">

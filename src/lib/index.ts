@@ -7,7 +7,6 @@ import Sidebar from './project/Sidebar.svelte';
 
 import HeaderBar from './HeaderBar.svelte';
 import IconBlank from './IconBlank.svelte';
-import CenterLoader from './CenterLoader.svelte';
 
 export {
 	Author,
@@ -17,6 +16,5 @@ export {
 	PackagePreview,
 	Sidebar,
 	HeaderBar,
-	IconBlank,
-	CenterLoader
+	IconBlank
 };

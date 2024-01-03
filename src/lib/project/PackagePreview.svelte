@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { CenterLoader } from '$lib';
 	import consts from '$lib/consts';
 	import { packageStatStore } from '$lib/stores';
 	import { markdownInline } from '$lib/utils';
@@ -54,7 +53,16 @@
 	<dl>
 		<dt class="text-sm opacity-50">Package preview</dt>
 		{#if state == 'loading'}
-			<CenterLoader />
+			<dd
+				class="style-markdown blockquote flex flex-col gap-1 border-l-primary-500 p-4 *:pointer-events-none"
+			>
+				<div class="placeholder animate-pulse" />
+				<span class="text-sm">
+					<div class="placeholder animate-pulse" />
+					<div class="placeholder animate-pulse" />
+					<div class="placeholder animate-pulse" />
+				</span>
+			</dd>
 		{:else if state == 'ready'}
 			<dd
 				class="style-markdown blockquote flex flex-col gap-1 border-l-primary-500 p-4 *:pointer-events-none"

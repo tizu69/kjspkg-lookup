@@ -17,6 +17,8 @@ export const packageStatusStore = writable<{
 export const currentAuthorStore = writable<string>('');
 export const currentSearchStore = writable<string>('');
 
+export const currentScrollPosition = writable<{ x: number; y: number }>({ x: 0, y: 0 });
+
 export const userPreferencesStore = localStorageStore<{
 	sortBy: '' | 'name' | 'author' | 'downloads' | 'views';
 	theme: string;
