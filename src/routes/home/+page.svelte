@@ -22,12 +22,3 @@
 	This website serves as a means to share KJSPKG packages more easily. Use the search bar above to
 	search for packages, or <a href="{base}/s" class="anchor">browse all packages</a>.
 </p>
-
-{#if $userPreferencesStore.visitState == 5}
-	<button
-		class="text-center anchor w-full"
-		on:click={() => ($userPreferencesStore.visitState = 4)}
-	>
-		If you wish to get redirected to the home page on launch instead, click here.
-	</button>
-{/if}

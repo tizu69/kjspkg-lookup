@@ -22,15 +22,11 @@ export const userPreferencesStore = localStorageStore<{
 	theme: string;
 	lightMode: boolean;
 	compact: boolean;
-	/* 0 = first visit, 1 = second visit, 2 = unchosen but visited
-	   4 = prefers /home, 5 = prefers /s */
-	visitState: number;
-	// lastSearched: string;
+	alreadyVisited: boolean;
 }>('preferences', {
 	sortBy: 'name',
 	theme: 'kjspkg',
 	lightMode: false,
 	compact: false,
-	visitState: 0,
-	// lastSearched: ''
+	alreadyVisited: true
 });

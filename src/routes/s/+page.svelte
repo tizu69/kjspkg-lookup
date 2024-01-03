@@ -228,14 +228,6 @@
 			sortBy={$userPreferencesStore.sortBy}
 			compact={$userPreferencesStore.compact}
 		/>
-		{#if $userPreferencesStore.visitState == 4 && !$packageStatusStore.search.v}
-			<button
-				class="card flex items-center justify-center p-4 hover:variant-soft-success"
-				on:click={() => ($userPreferencesStore.visitState = 5)}
-			>
-				Changed your mind? Click to be redirected to this page on launch instead.
-			</button>
-		{/if}
 	</dl>
 {:else if state == 'fail'}
 	<p>Something went wrong</p>
